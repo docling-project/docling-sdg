@@ -1,0 +1,141 @@
+[tool.poetry]
+name = "docling-sdg"
+version = "1.0.0"
+description = "Docling for Synthetic Data Generation (SDG) provides a set of tools to create artificial data from documents, leveraging generative AI and docling's parsing capabilities."
+license = "MIT"
+authors = [
+    "Cesar Berrospi Ramis <ceb@zurich.ibm.com>",
+    "Rafael Teixeira de Lima <rtdl@ibm.com>",
+    "Tim Strohmeyer <Tim.Strohmeyer@ibm.com>",
+    "Panos Vagenas <pva@zurich.ibm.com>",
+]
+maintainers = [
+    "Cesar Berrospi Ramis <ceb@zurich.ibm.com>",
+    "Rafael Teixeira de Lima <rtdl@ibm.com>",
+]
+readme = "README.md"
+homepage = "https://github.com/docling-project"
+repository = "https://github.com/docling-project/docling-sdg"
+keywords = ["docling", "document understanding", "artificial intelligence", "AI", "sdg", "synthetic data generation", "llm", "large language models", "prompt engineering"]
+classifiers=[
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "Natural Language :: English",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Scientific/Engineering :: Information Analysis",
+    "Topic :: Software Development :: Build Tools",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Typing :: Typed",
+]
+packages = [{ include = "docling_sdg" }]
+
+[tool.poetry.scripts]
+docling-sdg = "docling_sdg.cli.main:app"
+
+[tool.poetry.dependencies]
+python = "^3.9"
+pydantic = "^2.0.0"
+docling-core = {extras = ["chunking"], version = "^2.23.0"}
+typer = "^0.12.5"
+typing-extensions = "^4.12.2"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.3.5"
+mypy = "^1.15.0"
+pre-commit = "^4.1.0"
+ruff = "0.10.0"
+types-setuptools = "^70.3.0"
+python-semantic-release = "^7.32.2"
+
+[build-system]
+requires = ["poetry-sdg>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.ruff]
+line-length = 88
+target-version = "py39"
+fix = true
+
+[tool.ruff.format]
+# Like Black, use double quotes for strings.
+quote-style = "double"
+
+# Like Black, indent with spaces, rather than tabs.
+indent-style = "space"
+
+# Like Black, respect magic trailing commas.
+skip-magic-trailing-comma = false
+
+# Like Black, automatically detect the appropriate line ending.
+line-ending = "auto"
+
+# Format docstrings
+docstring-code-format = true
+
+[tool.ruff.lint]
+select = [
+    # flake8-bugbear
+    "B",
+    # McCabe
+    "C",
+    # pydocstyle
+    "D",
+    # pycodestyle
+    "E",
+    # Pyflakes
+    "F",
+    # isort
+    "I",
+    # pycodestyle warnings
+    "W"
+]
+ignore = ["D100", "D103", "D104"]
+
+[tool.ruff.lint.extend-per-file-ignores]
+"__init__.py" = [
+    # Module imported but unused
+    "F401",
+]
+
+[tool.ruff.lint.pep8-naming]
+classmethod-decorators = [
+    # Allow Pydantic's `@validator` decorator to trigger class method treatment.
+    "pydantic.validator",
+]
+
+[tool.ruff.lint.pydocstyle]
+convention = "pep257"
+
+[tool.mypy]
+pretty = true
+strict = true
+no_implicit_optional = true
+namespace_packages = true
+show_error_codes = true
+python_version = "3.9"
+plugins = ["pydantic.mypy"]
+
+[[tool.mypy.overrides]]
+module = []
+ignore_missing_imports = true
+
+[tool.semantic_release]
+# for default values check:
+# https://github.com/python-semantic-release/python-semantic-release/blob/v7.32.2/semantic_release/defaults.cfg
+
+version_source = "tag_only"
+branch = "main"
+
+# configure types which should trigger minor and patch version bumps respectively
+# (note that they must be a subset of the configured allowed types):
+parser_angular_allowed_types = "build,chore,ci,docs,feat,fix,perf,style,refactor,test"
+parser_angular_minor_types = "feat"
+parser_angular_patch_types = "fix,perf"

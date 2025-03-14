@@ -1,0 +1,40 @@
+fail_fast: true
+repos:
+  - repo: local
+    hooks:
+      - id: ruff-linter
+        name: "Ruff linter"
+        language: system
+        entry: poetry run ruff check --fix
+        pass_filenames: false
+        files: '^(docling_sdg|tests).*\.(py|ipynb)$'
+      # Run the formatter.
+      - id: ruff-format
+        name: "Ruff formatter"
+        language: system
+        entry: poetry run ruff format
+        pass_filenames: false
+        files: '^(docling_sdg|tests).*\.(py|ipynb)$'
+  - repo: local
+    hooks:
+      - id: mypy
+        name: MyPy
+        language: system
+        entry: poetry run mypy docling_sdg tests
+        pass_filenames: false
+        files: '\.py$'
+  - repo: local
+    hooks:
+      - id: pytest
+        name: Pytest
+        language: system
+        entry: poetry run pytest tests
+        pass_filenames: false
+        files: '\.py$'
+  - repo: local
+    hooks:
+      - id: poetry
+        name: Poetry
+        language: system
+        entry: poetry check --lock
+        pass_filenames: false
