@@ -1,21 +1,24 @@
-[tool.poetry]
+[project]
 name = "docling-sdg"
 version = "1.0.0"
 description = "Docling for Synthetic Data Generation (SDG) provides a set of tools to create artificial data from documents, leveraging generative AI and docling's parsing capabilities."
-license = "MIT"
+license = {text = "MIT"}
 authors = [
-    "Cesar Berrospi Ramis <ceb@zurich.ibm.com>",
-    "Rafael Teixeira de Lima <rtdl@ibm.com>",
-    "Tim Strohmeyer <Tim.Strohmeyer@ibm.com>",
-    "Panos Vagenas <pva@zurich.ibm.com>",
-]
+    {name="Cesar Berrospi Ramis", email="ceb@zurich.ibm.com"},
+    {name="Rafael Teixeira de Lima", email="rtdl@ibm.com"},
+    {name="Tim Strohmeyer", email="Tim.Strohmeyer@ibm.com"},
+    {name="Panos Vagenas", email="pva@zurich.ibm.com"},
+    {name="Michele Dolfi", email="dol@zurich.ibm.com"},
+    {name="Peter Staar", email="taa@zurich.ibm.com"},
+ ]
 maintainers = [
-    "Cesar Berrospi Ramis <ceb@zurich.ibm.com>",
-    "Rafael Teixeira de Lima <rtdl@ibm.com>",
+    {name="Cesar Berrospi Ramis", email="ceb@zurich.ibm.com"},
+    {name="Tim Strohmeyer", email="Tim.Strohmeyer@ibm.com"},
+    {name="Panos Vagenas", email="pva@zurich.ibm.com"},
+    {name="Michele Dolfi", email="dol@zurich.ibm.com"},
+    {name="Peter Staar", email="taa@zurich.ibm.com"},
 ]
 readme = "README.md"
-homepage = "https://github.com/docling-project"
-repository = "https://github.com/docling-project/docling-sdg"
 keywords = ["docling", "document understanding", "artificial intelligence", "AI", "sdg", "synthetic data generation", "llm", "large language models", "prompt engineering"]
 classifiers=[
     "Development Status :: 4 - Beta",
@@ -35,29 +38,29 @@ classifiers=[
     "Topic :: Software Development :: Libraries :: Python Modules",
     "Typing :: Typed",
 ]
-packages = [{ include = "docling_sdg" }]
+requires-python = ">=3.9"
+dependencies = [
+    "docling-core[chunking]>=2.23.0",
+    "pydantic>=2.0.0",
+    "typer>=0.12.5",
+    "typing-extensions>=4.12.2",
+]
 
-[tool.poetry.scripts]
+[dependency-groups]
+dev = [
+    "mypy>=1.15.0",
+    "pre-commit>=4.1.0",
+    "pytest>=8.3.5",
+    "python-semantic-release>=7.32.2",
+    "ruff>=0.10.0",
+    "types-setuptools>=70.3.0",
+]
+
+[project.scripts]
 docling-sdg = "docling_sdg.cli.main:app"
 
-[tool.poetry.dependencies]
-python = "^3.9"
-pydantic = "^2.0.0"
-docling-core = {extras = ["chunking"], version = "^2.23.0"}
-typer = "^0.12.5"
-typing-extensions = "^4.12.2"
-
-[tool.poetry.group.dev.dependencies]
-pytest = "^8.3.5"
-mypy = "^1.15.0"
-pre-commit = "^4.1.0"
-ruff = "0.10.0"
-types-setuptools = "^70.3.0"
-python-semantic-release = "^7.32.2"
-
-[build-system]
-requires = ["poetry-sdg>=1.0.0"]
-build-backend = "poetry.core.masonry.api"
+[tool.uv]
+package = true
 
 [tool.ruff]
 line-length = 88

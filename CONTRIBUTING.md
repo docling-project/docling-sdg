@@ -80,97 +80,78 @@ Please feel free to connect with us using the [discussion section](https://githu
 
 ## Setup
 
-### Usage of Poetry
+### Usage of Ruff
 
-We use Poetry to manage dependencies.
+We use [Ruff](https://docs.astral.sh/ruff/) to manage dependencies.
 
+#### Installation
 
-#### Install
+To install, follow the documentation here: https://docs.astral.sh/uv/getting-started/installation/
 
-To install, see the documentation here: https://python-poetry.org/docs/master/#installing-with-the-official-installer
-
-1. Install the Poetry globally in your machine
+1. Install the `uv` globally on your machine:
     ```bash
-    curl -sSL https://install.python-poetry.org | python3 -
+    curl -LsSf https://astral.sh/uv/install.sh | sh
     ```
-    The installation script will print the installation bin folder `POETRY_BIN` which you need in the next steps.
 
-2. Make sure Poetry is in your `$PATH`
-    - for `zsh`
-        ```sh
-        echo 'export PATH="POETRY_BIN:$PATH"' >> ~/.zshrc
-        ```
-    - for `bash`
-        ```sh
-        echo 'export PATH="POETRY_BIN:$PATH"' >> ~/.bashrc
-        ```
-
-3. The official guidelines linked above include useful details on the configuration of autocomplete for most shell environments, e.g. Bash and Zsh.
+2. The official guidelines linked above include useful details on configuring autocomplete for most shell environments, e.g., Bash and Zsh.
 
 
 #### Create a Virtual Environment and Install Dependencies
 
-To activate the Virtual Environment, run:
+To create the virtual environment, run:
 
 ```bash
-poetry shell
+uv venv
 ```
 
-To spawn a shell with the Virtual Environment activated. If the Virtual Environment doesn't exist, Poetry will create one for you. Then, to install dependencies, run:
+The virtual environment can be _activated_ to make its packages available:
 
 ```bash
-poetry install
+source .venv/bin/activate
+```
+
+Then, to install dependencies, run:
+
+```bash
+uv sync
 ```
 
 
 **(Advanced) Use a Specific Python Version**
 
-If for whatever reason you need to work in a specific (older) version of Python, run:
+If you need to work with a specific (older) version of Python, for instance, `3.11`, run:
 
 ```bash
-poetry env use $(which python3.9)
+uv venv --python 3.11
 ```
 
-This creates a Virtual Environment with Python 3.9. For other versions, replace `$(which python3.9)` by the path to the interpreter (e.g., `/usr/bin/python3.9`) or use `$(which pythonX.Y)`.
+More detailed options are described in the [uv documentation](https://docs.astral.sh/uv/pip/environments).
 
 
-#### Add a new dependency
-
-```bash
-poetry add NAME
-```
-
-
-## Testing
-
-To run the test suite, run:
+#### Add a New Dependency
 
 ```bash
-poetry run pytest test
-```
-
-or use the pre-commit check (see [Coding style guidelines](#coding-style-guidelines))
-
-```bash
-poetry run pre-commit run pytest
+uv add [OPTIONS] <PACKAGES|--requirements <REQUIREMENTS>>
 ```
 
 
-## Coding style guidelines
+
+## Code Sytle Guidelines
 
 We use the following tools to enforce code style:
 
-- Ruff, as linter and code formatter
-- MyPy, to check typing specs
+- [Ruff](https://docs.astral.sh/ruff/), as linter and code formatter
+- [MyPy](https://mypy.readthedocs.io), to check typing specs
 
-We run a series of checks on the code base on every commit, using `pre-commit`. To install the hooks, run:
+We run a series of checks on every commit, including a test suite, using [pre-commit](https://pre-commit.com/).
+To install the hooks, run:
 
 ```bash
-poetry run pre-commit install
+uv run pre-commit install
 ```
 
 To run the checks on-demand, run:
 
 ```bash
-poetry run pre-commit run --all-files
+uv run pre-commit run --all-files
 ```
