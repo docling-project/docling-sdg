@@ -14,7 +14,6 @@ authors = [
 maintainers = [
     {name="Cesar Berrospi Ramis", email="ceb@zurich.ibm.com"},
     {name="Tim Strohmeyer", email="Tim.Strohmeyer@ibm.com"},
-    {name="Panos Vagenas", email="pva@zurich.ibm.com"},
     {name="Michele Dolfi", email="dol@zurich.ibm.com"},
     {name="Peter Staar", email="taa@zurich.ibm.com"},
 ]
@@ -27,7 +26,6 @@ classifiers=[
     "Natural Language :: English",
     "Operating System :: OS Independent",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
@@ -38,10 +36,13 @@ classifiers=[
     "Topic :: Software Development :: Libraries :: Python Modules",
     "Typing :: Typed",
 ]
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 dependencies = [
+    "docling>=2.26.0",
     "docling-core[chunking]>=2.23.0",
     "pydantic>=2.0.0",
+    "semchunk>=2.2.2",
+    "transformers>=4.42.4",
     "typer>=0.12.5",
     "typing-extensions>=4.12.2",
 ]
@@ -59,13 +60,23 @@ dev = [
 [project.scripts]
 docling-sdg = "docling_sdg.cli.main:app"
 
+[project.urls]
+Homepage = "https://github.com/docling-project/docling-sdg"
+Repository = "https://github.com/docling-project/docling-sdg"
+Issues = "https://github.com/docling-project/docling-sdg/issues"
+Changelog = "https://github.com/docling-project/docling-sdg/blob/main/CHANGELOG.md"
+
+[tool.setuptools.packages.find]
+include = ["docling_sdg"]
+
 [tool.uv]
 package = true
 
 [tool.ruff]
 line-length = 88
-target-version = "py39"
+target-version = "py310"
 fix = true
+respect-gitignore = true
 
 [tool.ruff.format]
 # Like Black, use double quotes for strings.
@@ -100,7 +111,7 @@ select = [
     # pycodestyle warnings
     "W"
 ]
-ignore = ["D100", "D103", "D104"]
+ignore = ["D100", "D101", "D102", "D103", "D104", "D105", "D107"]
 
 [tool.ruff.lint.extend-per-file-ignores]
 "__init__.py" = [
@@ -114,20 +125,34 @@ classmethod-decorators = [
     "pydantic.validator",
 ]
 
+[tool.ruff.lint.isort]
+combine-as-imports = true
+section-order = [
+  "future",
+  "standard-library",
+  "third-party",
+  "docling",
+  "first-party",
+  "local-folder",
+]
+
 [tool.ruff.lint.pydocstyle]
-convention = "pep257"
+convention = "google"
 
 [tool.mypy]
 pretty = true
 strict = true
 no_implicit_optional = true
+implicit_reexport = true
 namespace_packages = true
 show_error_codes = true
-python_version = "3.9"
+python_version = "3.10"
 plugins = ["pydantic.mypy"]
 
 [[tool.mypy.overrides]]
-module = []
+module = [
+    "transformers.*",
+]
 ignore_missing_imports = true
 
 [tool.semantic_release]
