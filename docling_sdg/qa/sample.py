@@ -98,7 +98,7 @@ class PassageSampler:
                     _log.warning(f"Could not parse document: {res.errors}")
                     continue
                 doc: DoclingDocument = res.document
-                doc_id = doc.name  # TODO: find alternative for uniqueness in collection
+                doc_id = str(doc.origin.binary_hash) if doc.origin else doc.name
                 _log.debug(f"Parsed document {doc_id}.")
                 chunk_iter = self.chunker.chunk(dl_doc=doc)
                 qa_chunks.extend(
