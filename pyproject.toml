@@ -40,6 +40,8 @@ requires-python = ">=3.10"
 dependencies = [
     "docling>=2.26.0",
     "docling-core[chunking]>=2.23.0",
+    "llama-index-core>=0.12.25",
+    "llama-index-llms-ibm>=0.3.3",
     "pydantic>=2.0.0",
     "semchunk>=2.2.2",
     "transformers>=4.42.4",
@@ -125,6 +127,9 @@ classmethod-decorators = [
     "pydantic.validator",
 ]
 
+[tool.ruff.lint.isort.sections]
+"docling" = ["docling", "docling_core"]
+
 [tool.ruff.lint.isort]
 combine-as-imports = true
 section-order = [
@@ -139,6 +144,9 @@ section-order = [
 [tool.ruff.lint.pydocstyle]
 convention = "google"
 
+[tool.ruff.lint.mccabe]
+max-complexity = 15
+
 [tool.mypy]
 pretty = true
 strict = true
@@ -152,6 +160,8 @@ plugins = ["pydantic.mypy"]
 [[tool.mypy.overrides]]
 module = [
     "transformers.*",
+    "llama_index.llms.ibm.*",
+    "tqdm.*",
 ]
 ignore_missing_imports = true
 

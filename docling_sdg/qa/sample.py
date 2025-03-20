@@ -1,49 +1,23 @@
 import logging
-import os
 import random
 import time
 from pathlib import Path
 from typing import Iterator, Optional, Union, cast
 
-import jsonlines
+from pydantic import ConfigDict, validate_call
+from transformers import AutoTokenizer, PreTrainedTokenizerBase
+
 from docling.datamodel.base_models import ConversionStatus
 from docling.document_converter import DocumentConverter
 from docling_core.transforms.chunker import DocChunk, HierarchicalChunker
 from docling_core.transforms.chunker.hybrid_chunker import HybridChunker
 from docling_core.types import DoclingDocument
 from docling_core.types.io import DocumentStream
-from pydantic import ConfigDict, validate_call
-from transformers import AutoTokenizer, PreTrainedTokenizerBase
 
 from docling_sdg.qa.base import QaChunk, SampleOptions, SampleResult, Status
-from docling_sdg.qa.utils import get_qa_chunks
+from docling_sdg.qa.utils import get_qa_chunks, retrieve_stored_passages, save_to_file
 
 _log = logging.getLogger(__name__)
-
-
-def _retrieve_stored_passages(in_file: Path) -> list[QaChunk]:
-    passages: list[QaChunk] = []
-
-    if os.path.isfile(in_file):
-        with open(in_file, encoding="utf-8") as file_obj:
-            for line in file_obj:
-                line += line.strip()
-                if line:
-                    passages.append(QaChunk.model_validate_json(line))
-        _log.info(
-            f"Passage file {in_file} already has {len(passages)} passages and they "
-            "will be skipped."
-        )
-
-    return passages
-
-
-def _store_passages(passages: list[QaChunk], out_file: Path) -> None:
-    mode = "a" if os.path.isfile(out_file) else "w"
-
-    with jsonlines.open(out_file, mode=mode) as writer:
-        for item in passages:
-            cast(jsonlines.Writer, writer).write(item.model_dump())
 
 
 class PassageSampler:
@@ -52,7 +26,7 @@ class PassageSampler:
     )
 
     def __init__(self, sample_options: Optional[SampleOptions] = None):
-        self.options = sample_options or SampleOptions(sample_file="sample.jsonl")
+        self.options = sample_options or SampleOptions()
         self.chunker = (
             HierarchicalChunker(heading_as_metadata=True)
             if self.options.chunker == "hierarchical"
@@ -81,8 +55,8 @@ class PassageSampler:
     def sample(self, source: list[Union[Path, str, DocumentStream]]) -> SampleResult:
         start_time = time.time()
 
-        passages: list[QaChunk] = _retrieve_stored_passages(
-            in_file=self.options.sample_file
+        passages: list[QaChunk] = list(
+            retrieve_stored_passages(in_file=self.options.sample_file)
         )
 
         num_exported_passages: int = 0
@@ -118,10 +92,10 @@ class PassageSampler:
             if len(qa_chunks) > num_extra_passages:
                 random.seed(self.options.seed)
                 sample_passages = random.sample(qa_chunks, num_extra_passages)
-                _store_passages(sample_passages, self.options.sample_file)
+                save_to_file(sample_passages, self.options.sample_file)
                 num_exported_passages = len(sample_passages)
             else:
-                _store_passages(qa_chunks, self.options.sample_file)
+                save_to_file(qa_chunks, self.options.sample_file)
                 num_exported_passages = len(qa_chunks)
 
             end_time = time.time()
