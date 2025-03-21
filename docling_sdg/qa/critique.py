@@ -107,7 +107,7 @@ class Judge:
 
         critique_res = CritiqueResult(
             status=Status.SUCCESS,
-            timing=(end_time - start_time),
+            time_taken=(end_time - start_time),
             num_qac=num_exported_critiques,
             output=self.options.critiqued_file,
         )

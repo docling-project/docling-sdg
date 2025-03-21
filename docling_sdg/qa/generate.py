@@ -103,7 +103,7 @@ class Generator:
 
         result = self.generate_from_chunks(passages)
         end_time = time.time()
-        result.timing = end_time - start_time
+        result.time_taken = end_time - start_time
 
         return result
 
@@ -224,7 +224,7 @@ class Generator:
 
         generate_res = GenerateResult(
             status=Status.SUCCESS,
-            timing=(end_time - start_time),
+            time_taken=(end_time - start_time),
             num_qac=num_exported_qac,
             output=self.options.generated_file,
         )

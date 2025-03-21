@@ -102,7 +102,7 @@ class PassageSampler:
 
         sample_res = SampleResult(
             status=Status.SUCCESS,
-            timing=(end_time - start_time),
+            time_taken=(end_time - start_time),
             num_passages=num_exported_passages,
             output=self.options.sample_file,
         )

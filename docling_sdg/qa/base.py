@@ -130,7 +130,7 @@ class CritiqueOptions(LlmOptions):
 
 class BaseResult(BaseModel):
     status: Annotated[Status, Field(description="Status of the running process.")]
-    timing: Annotated[float, Field(description="Processing time in seconds.")]
+    time_taken: Annotated[float, Field(description="Processing time in seconds.")]
 
 
 class SampleResult(BaseResult):
