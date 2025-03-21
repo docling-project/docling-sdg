@@ -2,6 +2,7 @@
 
 from llama_index.core import PromptTemplate
 
+from docling_sdg.qa.prompts.critique_prompts import DEFAULT_STAND_ALONE_PROMPT
 from docling_sdg.qa.prompts.generation_prompts import DEFAULT_SUMMARY_QUESTION_PROMPT
 
 
@@ -19,3 +20,9 @@ def test_generation_prompts() -> None:
     li_prompt = li_template.format(context_str=context)
 
     assert prompt == li_prompt
+
+
+def test_critique_prompts() -> None:
+    question = "What is the revenue of this company in 2024?"
+    prompt = DEFAULT_STAND_ALONE_PROMPT.format(question_str=question)
+    assert prompt

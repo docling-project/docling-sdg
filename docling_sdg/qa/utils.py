@@ -61,15 +61,18 @@ def retrieve_stored_passages(in_file: Path) -> Iterator[QaChunk]:
                     yield QaChunk.model_validate_json(line)
 
 
-def retrieve_stored_qac_ids(in_file: Path) -> Iterator[tuple[str, str]]:
+def retrieve_stored_qac(in_file: Path) -> Iterator[GenQAC]:
     if os.path.isfile(in_file):
         with open(in_file, encoding="utf-8") as qac_file:
             for line in qac_file:
                 line += line.strip()
                 if line:
-                    qac = GenQAC.model_validate_json(line)
+                    yield GenQAC.model_validate_json(line)
 
-                    yield qac.qac_id, qac.chunk_id
+
+def retrieve_stored_qac_ids(in_file: Path) -> Iterator[tuple[str, str]]:
+    for qac in retrieve_stored_qac(in_file):
+        yield qac.qac_id, qac.chunk_id
 
 
 def postprocess_question(question: str) -> Optional[str]:

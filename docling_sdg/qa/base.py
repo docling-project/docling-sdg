@@ -17,6 +17,10 @@ from docling_core.transforms.chunker import DocChunk, DocMeta
 from docling_core.types.doc import DocItemLabel
 from docling_core.types.nlp.qa import QAPair
 
+from docling_sdg.qa.prompts.critique_prompts import (
+    CritiquePromptTemplate,
+    default_critique_templates,
+)
 from docling_sdg.qa.prompts.generation_prompts import (
     QaPromptTemplate,
     default_combined_question_qa_prompt,
@@ -110,6 +114,20 @@ class GenerateOptions(LlmOptions):
     )
 
 
+class CritiqueOptions(LlmOptions):
+    critiqued_file: Path = Field(
+        default=Path("docling_sdg_critiqued_qac.jsonl"),
+        description="Path to the target file to store the critiqued Q&A.",
+    )
+    max_qac: int = Field(
+        default=100, gt=0, description="Maximum number of Q&A items to critique."
+    )
+    prompts: list[CritiquePromptTemplate] = Field(
+        default=default_critique_templates,
+        description="List of critique prompt templates.",
+    )
+
+
 class BaseResult(BaseModel):
     status: Annotated[Status, Field(description="Status of the running process.")]
     timing: Annotated[float, Field(description="Processing time in seconds.")]
@@ -130,6 +148,21 @@ class GenerateResult(BaseResult):
     ]
     num_qac: Annotated[
         NonNegativeInt, Field(description="Number of Q&A items added to the file.")
+    ]
+
+
+class CritiqueResult(BaseResult):
+    output: Annotated[
+        Path,
+        Field(
+            description=(
+                "Path to the file containing the generated Q&A item with critiques."
+            )
+        ),
+    ]
+    num_qac: Annotated[
+        NonNegativeInt,
+        Field(description=("Number of critiqued Q&A items added to the file.")),
     ]
 
 
@@ -158,11 +191,33 @@ class QaChunk(DocChunk):
             return NotImplemented
 
 
+class Critique(BaseModel):
+    evaluation: Optional[str] = Field(
+        None, description=("An explanation of the critique.")
+    )
+    rating: Annotated[
+        Optional[int],
+        Field(
+            description=(
+                "A number indicating the evaluation result. A higher rating means "
+                "better quality."
+            )
+        ),
+    ]
+
+
 class GenQAC(QAPair[BaseModel]):
     """Generated question-answering-context object."""
 
-    doc_id: str
-    chunk_id: str
-    qac_id: str
-    # prompts: dict[str, str] = {}
-    critiques: dict[str, str | int] = {}
+    doc_id: Annotated[str, Field(description="The unique identifier of a document.")]
+    chunk_id: Annotated[
+        str,
+        Field(description="The unique identifier of a passage within the document."),
+    ]
+    qac_id: Annotated[
+        str,
+        Field(description="The unique identifier of a question-answer-contex item."),
+    ]
+    critiques: dict[str, Critique] = Field(
+        default={}, description="A set of critiques for each supported dimension."
+    )
