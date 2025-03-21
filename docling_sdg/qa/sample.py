@@ -53,6 +53,7 @@ class PassageSampler:
 
     @validate_call(config=ConfigDict(strict=True))
     def sample(self, source: list[Union[Path, str, DocumentStream]]) -> SampleResult:
+        _log.debug(f"Output file: {self.options.sample_file.absolute()}")
         start_time = time.time()
 
         passages: list[QaChunk] = list(

@@ -1,3 +1,4 @@
+import logging
 import time
 from pathlib import Path
 from typing import Iterator, Optional
@@ -20,6 +21,8 @@ from docling_sdg.qa.utils import (
     retrieve_stored_qac_ids,
     save_to_file,
 )
+
+_log = logging.getLogger(__name__)
 
 
 class Judge:
@@ -75,6 +78,7 @@ class Judge:
 
     @validate_call(config=ConfigDict(strict=True))
     def critique(self, source: Path) -> CritiqueResult:
+        _log.debug(f"Output file: {self.options.critiqued_file.absolute()}")
         start_time = time.time()
 
         qac_collection: Iterator[GenQAC] = retrieve_stored_qac(in_file=source)

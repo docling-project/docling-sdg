@@ -107,7 +107,6 @@ class Generator:
 
         return result
 
-    @validate_call(config=ConfigDict(strict=True))
     def generate_from_chunks(  # noqa: C901
         self, stored_chunks: Iterator[QaChunk]
     ) -> GenerateResult:

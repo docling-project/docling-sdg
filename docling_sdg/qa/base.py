@@ -2,7 +2,7 @@
 
 from enum import Enum
 from pathlib import Path
-from typing import Annotated, Any, Literal, Optional
+from typing import Annotated, Any, Optional
 
 from llama_index.llms.ibm.base import GenTextParamsMetaNames
 from pydantic import (
@@ -33,6 +33,11 @@ class Status(str, Enum):
     PARTIAL_SUCCESS = "partial_success"
 
 
+class Chunker(str, Enum):
+    HYBRID = "hybrid"
+    HIERARCHICAL = "hierarchical"
+
+
 class SampleOptions(BaseModel):
     """Passage sampling options for Q&A generation."""
 
@@ -40,10 +45,10 @@ class SampleOptions(BaseModel):
         default=Path("docling_sdg_sample.jsonl"),
         description="Path to the target file to store the sample passages.",
     )
-    chunker: Literal["hybrid", "hierarchical"] = Field(
-        default="hybrid",
+    chunker: Chunker = Field(
+        default=Chunker.HYBRID,
         description="Docling chunker to create passages.",
-        examples=["HierarchicalChunker", "HybridChunker"],
+        examples=["hybrid", "hierarchical"],
     )
     min_token_count: int = Field(
         default=10,
