@@ -5,14 +5,13 @@ from pathlib import Path
 from typing import Annotated, Any, Optional
 
 from llama_index.core.llms.llm import LLM
-from llama_index.llms.ibm import WatsonxLLM
 from llama_index.llms.ibm.base import GenTextParamsMetaNames
 from pydantic import (
     AnyUrl,
     BaseModel,
     Field,
     NonNegativeInt,
-    SecretStr,
+    SecretStr, TypeAdapter,
 )
 
 from docling_core.transforms.chunker import DocChunk, DocMeta
@@ -71,16 +70,22 @@ class SampleOptions(BaseModel):
     )
     seed: int = Field(default=0, description="Random seed for sampling.")
 
+class LlmProviders(str, Enum):
+    OPENAI_LIKE = 'openai_like'
+    WATSONX = 'watsonx'
 
 class LlmOptions(BaseModel):
     """Generative AI options for Q&A generation.
 
     Currently, only support watsonx.ai.
     """
-
+    provider: LlmProviders = Field(
+        default=LlmProviders.OPENAI_LIKE,
+        description=f"LLM provider: [{','.join(LlmProviders)}]"
+    )
     url: AnyUrl = Field(
-        default=AnyUrl("https://us-south.ml.cloud.ibm.com"),
-        description="Url to Watson Machine Learning or CPD instance.",
+        default=AnyUrl("http://127.0.0.1:11434/v1"),
+        description="Url to LLM API endpoint",
     )
     project_id: Annotated[
         SecretStr, Field(description="ID of the Watson Studio project.")
@@ -91,7 +96,7 @@ class LlmOptions(BaseModel):
     ]
     model_id: str = Field(
         default="mistralai/mixtral-8x7b-instruct-v01",
-        description="Type of model to use.",
+        description="Which model to use.",
     )
     max_new_tokens: int = Field(
         default=512, ge=0, description="The maximum number of tokens to generate."
@@ -236,10 +241,30 @@ def initialize_llm(llm_options: Optional[LlmOptions] = None) -> LLM:
     if llm_options.project_id is None:
         raise ValueError("Project ID is required")
 
-    return WatsonxLLM(
-        model_id=llm_options.model_id,
-        url=llm_options.url,
-        project_id=llm_options.project_id,
-        apikey=llm_options.api_key,
-        additional_params=llm_options.additional_params,
-    )
+    temp: float = 0.0
+    if llm_options.additional_params:
+        temp = TypeAdapter(float).validate_python(
+            llm_options.additional_params.get(GenTextParamsMetaNames.TEMPERATURE)
+        )
+
+    match llm_options.provider:
+        case LlmProviders.OPENAI_LIKE:
+            from llama_index.llms.openai_like import OpenAILike
+
+            return OpenAILike(
+                model=llm_options.model_id,
+                api_base=llm_options.url,
+                api_key=llm_options.api_key,
+                max_tokens=llm_options.additional_params[GenTextParamsMetaNames.MAX_NEW_TOKENS],
+                temperature=temp,
+            )
+        case LlmProviders.WATSONX:
+            from llama_index.llms.ibm import WatsonxLLM
+            return WatsonxLLM(
+                model_id=llm_options.model_id,
+                url=llm_options.url,
+                project_id=llm_options.project_id,
+                apikey=llm_options.api_key,
+                temperature=temp,
+                additional_params=llm_options.additional_params,
+            )
