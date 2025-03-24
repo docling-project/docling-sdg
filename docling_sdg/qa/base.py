@@ -80,12 +80,13 @@ class LlmOptions(BaseModel):
         default=AnyUrl("https://us-south.ml.cloud.ibm.com"),
         description="Url to Watson Machine Learning or CPD instance.",
     )
-    project_id: Optional[SecretStr] = Field(
-        default=None, description="ID of the Watson Studio project."
-    )
-    api_key: Optional[SecretStr] = Field(
-        default=None, description="API key to Watson Machine Learning or CPD instance."
-    )
+    project_id: Annotated[
+        SecretStr, Field(description="ID of the Watson Studio project.")
+    ]
+    api_key: Annotated[
+        SecretStr,
+        Field(description="API key to Watson Machine Learning or CPD instance."),
+    ]
     model_id: str = Field(
         default="mistralai/mixtral-8x7b-instruct-v01",
         description="Type of model to use.",

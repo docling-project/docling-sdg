@@ -1,10 +1,13 @@
 import logging
+import os
 import tempfile
 from pathlib import Path
 from typing import Annotated, Any, Optional, Type, Union
 
 import typer
-from pydantic import TypeAdapter
+from dotenv import load_dotenv
+from llama_index.llms.ibm.base import GenTextParamsMetaNames
+from pydantic import AnyUrl, TypeAdapter
 from rich.console import Console
 
 from docling.datamodel.base_models import FormatToExtensions, InputFormat
@@ -18,6 +21,7 @@ from docling_sdg.qa.base import (
     CritiqueResult,
     GenerateOptions,
     GenerateResult,
+    LlmOptions,
     SampleOptions,
     SampleResult,
 )
@@ -32,7 +36,7 @@ app = typer.Typer(no_args_is_help=True, add_completion=False)
 console = Console()
 err_console = Console(stderr=True)
 
-QaOption = Union[SampleOptions, GenerateOptions, CritiqueOptions]
+QaOption = Union[SampleOptions, CritiqueOptions, CritiqueOptions]
 
 
 def get_option_def(field: str, option: Type[QaOption]) -> Any:
@@ -49,6 +53,39 @@ def get_option_desc(field: str, option: Type[QaOption]) -> Optional[str]:
         return None
     else:
         return field_info.description
+
+
+def set_watsonx_options(options: LlmOptions) -> None:
+    if "WATSONX_URL" in os.environ:
+        options.url = TypeAdapter(AnyUrl).validate_python(os.environ.get("WATSONX_URL"))
+    if "WATSONX_MODEL_ID" in os.environ:
+        options.model_id = TypeAdapter(str).validate_python(
+            os.environ.get("WATSONX_MODEL_ID")
+        )
+    if "WATSONX_MAX_NEW_TOKENS" in os.environ:
+        options.max_new_tokens = TypeAdapter(int).validate_python(
+            os.environ.get("WATSONX_MAX_NEW_TOKENS")
+        )
+    if "WATSONX_DECODING_METHOD" in os.environ and options.additional_params:
+        options.additional_params[GenTextParamsMetaNames.DECODING_METHOD] = TypeAdapter(
+            str
+        ).validate_python(os.environ.get("WATSONX_DECODING_METHOD"))
+    if "WATSONX_MIN_NEW_TOKENS" in os.environ and options.additional_params:
+        options.additional_params[GenTextParamsMetaNames.MIN_NEW_TOKENS] = (
+            os.environ.get("WATSONX_MIN_NEW_TOKENS")
+        )
+    if "WATSONX_TEMPERATURE" in os.environ and options.additional_params:
+        options.additional_params[GenTextParamsMetaNames.TEMPERATURE] = os.environ.get(
+            "WATSONX_TEMPERATURE"
+        )
+    if "WATSONX_TOP_K" in os.environ and options.additional_params:
+        options.additional_params[GenTextParamsMetaNames.TOP_K] = os.environ.get(
+            "WATSONX_TOP_K"
+        )
+    if "WATSONX_TOP_P" in os.environ and options.additional_params:
+        options.additional_params[GenTextParamsMetaNames.TOP_P] = os.environ.get(
+            "WATSONX_TOP_P"
+        )
 
 
 @app.command(
@@ -217,17 +254,25 @@ def generate(
         typer.Option(
             "--generated-file",
             "-f",
-            help=get_option_desc("generated_file", GenerateOptions),
+            help=get_option_desc("generated_file", CritiqueOptions),
         ),
-    ] = get_option_def("generated_file", GenerateOptions),
+    ] = get_option_def("generated_file", CritiqueOptions),
     max_qac: Annotated[
         Optional[int],
         typer.Option(
             "--max-qac",
             "-q",
-            help=get_option_desc("max_qac", GenerateOptions),
+            help=get_option_desc("max_qac", CritiqueOptions),
         ),
-    ] = get_option_def("max_qac", GenerateOptions),
+    ] = get_option_def("max_qac", CritiqueOptions),
+    watsonx: Annotated[
+        Optional[Path],
+        typer.Option(
+            "--watsonx",
+            "-w",
+            help="Path to a file with the parameters for watsonx.ai.",
+        ),
+    ] = Path("./.env"),
 ) -> None:
     if verbose == 0:
         logging.basicConfig(level=logging.WARNING)
@@ -242,11 +287,25 @@ def generate(
         )
         raise typer.Abort()
 
-    options: GenerateOptions = GenerateOptions()
+    if not watsonx or not os.path.isfile(watsonx):
+        err_console.print(
+            f"[red]Error: The watsonx.ai file {watsonx} does not exist.[/red]"
+        )
+        raise typer.Abort()
+
+    load_dotenv(watsonx)
+
+    options = GenerateOptions(
+        project_id=os.environ.get("WATSONX_INSTANCE_ID"),
+        api_key=os.environ.get("WATSONX_APIKEY"),
+    )
+
+    set_watsonx_options(options)
     if generated_file:
         options.generated_file = generated_file
     if max_qac:
         options.max_qac = max_qac
+
     generator: Generator = Generator(generate_options=options)
     result: GenerateResult = generator.generate_from_sample(input_source)
     typer.echo(f"Q&A Generation finished: {result}")
@@ -290,6 +349,14 @@ def critique(
             help=get_option_desc("max_qac", CritiqueOptions),
         ),
     ] = get_option_def("max_qac", CritiqueOptions),
+    watsonx: Annotated[
+        Optional[Path],
+        typer.Option(
+            "--watsonx",
+            "-w",
+            help="Path to a file with the parameters for watsonx.ai.",
+        ),
+    ] = Path("./.env"),
 ) -> None:
     if verbose == 0:
         logging.basicConfig(level=logging.WARNING)
@@ -304,11 +371,25 @@ def critique(
         )
         raise typer.Abort()
 
-    options: CritiqueOptions = CritiqueOptions()
+    if not watsonx or not os.path.isfile(watsonx):
+        err_console.print(
+            f"[red]Error: The watsonx.ai file {watsonx} does not exist.[/red]"
+        )
+        raise typer.Abort()
+
+    load_dotenv(watsonx)
+
+    options = CritiqueOptions(
+        project_id=os.environ.get("WATSONX_INSTANCE_ID"),
+        api_key=os.environ.get("WATSONX_APIKEY"),
+    )
+
+    set_watsonx_options(options)
     if critiqued_file:
         options.critiqued_file = critiqued_file
     if max_qac:
         options.max_qac = max_qac
+
     judge: Judge = Judge(critique_options=options)
     result: CritiqueResult = judge.critique(input_source)
     typer.echo(f"Q&A Critique finished: {result}")

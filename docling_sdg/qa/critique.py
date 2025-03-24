@@ -1,7 +1,7 @@
 import logging
 import time
 from pathlib import Path
-from typing import Iterator, Optional
+from typing import Iterator
 
 import tqdm
 from llama_index.core.prompts.utils import format_string
@@ -28,14 +28,9 @@ _log = logging.getLogger(__name__)
 class Judge:
     def __init__(
         self,
-        critique_options: Optional[CritiqueOptions] = None,
+        critique_options: CritiqueOptions,
     ):
-        self.options = critique_options or CritiqueOptions()
-
-        if self.options.api_key is None:
-            raise ValueError("API key is required")
-        if self.options.project_id is None:
-            raise ValueError("Project ID is required")
+        self.options = critique_options
 
         llm = WatsonxLLM(
             model_id=self.options.model_id,

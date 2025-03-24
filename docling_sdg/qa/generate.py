@@ -4,7 +4,7 @@ import logging
 import time
 from datetime import datetime
 from pathlib import Path
-from typing import Iterator, Optional
+from typing import Iterator
 
 import tqdm
 from llama_index.core import PromptTemplate
@@ -37,14 +37,9 @@ _log = logging.getLogger(__name__)
 class Generator:
     def __init__(
         self,
-        generate_options: Optional[GenerateOptions] = None,
+        generate_options: GenerateOptions,
     ):
-        self.options = generate_options or GenerateOptions()
-
-        if self.options.api_key is None:
-            raise ValueError("API key is required")
-        if self.options.project_id is None:
-            raise ValueError("Project ID is required")
+        self.options = generate_options
 
         self.qac_types = list(
             {label for prt in self.options.prompts for label in prt.labels or []}
@@ -97,6 +92,7 @@ class Generator:
 
     @validate_call(config=ConfigDict(strict=True))
     def generate_from_sample(self, source: Path) -> GenerateResult:
+        _log.debug(f"Output file: {self.options.generated_file.absolute()}")
         start_time = time.time()
 
         passages: Iterator[QaChunk] = retrieve_stored_passages(in_file=source)
