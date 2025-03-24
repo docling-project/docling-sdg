@@ -238,8 +238,6 @@ class GenQAC(QAPair[BaseModel]):
 def initialize_llm(llm_options: Optional[LlmOptions] = None) -> LLM:
     if llm_options.api_key is None:
         raise ValueError("API key is required")
-    if llm_options.project_id is None:
-        raise ValueError("Project ID is required")
 
     temp: float = 0.0
     if llm_options.additional_params:
@@ -259,6 +257,9 @@ def initialize_llm(llm_options: Optional[LlmOptions] = None) -> LLM:
                 temperature=temp,
             )
         case LlmProviders.WATSONX:
+            if llm_options.project_id is None:
+                raise ValueError("Project ID is required")
+
             from llama_index.llms.ibm import WatsonxLLM
             return WatsonxLLM(
                 model_id=llm_options.model_id,
