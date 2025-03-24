@@ -4,6 +4,8 @@ from enum import Enum
 from pathlib import Path
 from typing import Annotated, Any, Optional
 
+from llama_index.core.llms.llm import LLM
+from llama_index.llms.ibm import WatsonxLLM
 from llama_index.llms.ibm.base import GenTextParamsMetaNames
 from pydantic import (
     AnyUrl,
@@ -226,4 +228,18 @@ class GenQAC(QAPair[BaseModel]):
     ]
     critiques: dict[str, Critique] = Field(
         default={}, description="A set of critiques for each supported dimension."
+    )
+
+def initialize_llm(llm_options: Optional[LlmOptions] = None) -> LLM:
+    if llm_options.api_key is None:
+        raise ValueError("API key is required")
+    if llm_options.project_id is None:
+        raise ValueError("Project ID is required")
+
+    return WatsonxLLM(
+        model_id=llm_options.model_id,
+        url=llm_options.url,
+        project_id=llm_options.project_id,
+        apikey=llm_options.api_key,
+        additional_params=llm_options.additional_params,
     )
