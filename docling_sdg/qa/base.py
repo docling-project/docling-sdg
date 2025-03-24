@@ -239,12 +239,6 @@ def initialize_llm(llm_options: Optional[LlmOptions] = None) -> LLM:
     if llm_options.api_key is None:
         raise ValueError("API key is required")
 
-    temp: float = 0.0
-    if llm_options.additional_params:
-        temp = TypeAdapter(float).validate_python(
-            llm_options.additional_params.get(GenTextParamsMetaNames.TEMPERATURE)
-        )
-
     match llm_options.provider:
         case LlmProviders.OPENAI_LIKE:
             from llama_index.llms.openai_like import OpenAILike
@@ -253,8 +247,8 @@ def initialize_llm(llm_options: Optional[LlmOptions] = None) -> LLM:
                 model=llm_options.model_id,
                 api_base=llm_options.url,
                 api_key=llm_options.api_key,
-                max_tokens=llm_options.additional_params[GenTextParamsMetaNames.MAX_NEW_TOKENS],
-                temperature=temp,
+                max_tokens=llm_options.max_new_tokens,
+                temperature=llm_options.additional_params[GenTextParamsMetaNames.TEMPERATURE],
             )
         case LlmProviders.WATSONX:
             if llm_options.project_id is None:
@@ -266,6 +260,6 @@ def initialize_llm(llm_options: Optional[LlmOptions] = None) -> LLM:
                 url=llm_options.url,
                 project_id=llm_options.project_id,
                 apikey=llm_options.api_key,
-                temperature=temp,
+                temperature=llm_options.additional_params[GenTextParamsMetaNames.TEMPERATURE],
                 additional_params=llm_options.additional_params,
             )
