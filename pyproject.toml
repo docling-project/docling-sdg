@@ -36,7 +36,7 @@ classifiers=[
     "Topic :: Software Development :: Libraries :: Python Modules",
     "Typing :: Typed",
 ]
-requires-python = ">=3.10"
+requires-python = ">=3.10,<3.13"
 dependencies = [
     "docling>=2.26.0",
     "docling-core[chunking]>=2.23.0",
