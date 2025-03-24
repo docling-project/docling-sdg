@@ -51,7 +51,7 @@ class SampleOptions(BaseModel):
         examples=["hybrid", "hierarchical"],
     )
     min_token_count: int = Field(
-        default=10,
+        default=20,
         ge=0,
         le=512,
         description="Only consider passages with at least this number of tokens.",

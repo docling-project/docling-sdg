@@ -56,7 +56,7 @@ def retrieve_stored_passages(in_file: Path) -> Iterator[QaChunk]:
     if os.path.isfile(in_file):
         with open(in_file, encoding="utf-8") as file_obj:
             for line in file_obj:
-                line += line.strip()
+                line = line.strip()
                 if line:
                     yield QaChunk.model_validate_json(line)
 
@@ -65,7 +65,7 @@ def retrieve_stored_qac(in_file: Path) -> Iterator[GenQAC]:
     if os.path.isfile(in_file):
         with open(in_file, encoding="utf-8") as qac_file:
             for line in qac_file:
-                line += line.strip()
+                line = line.strip()
                 if line:
                     yield GenQAC.model_validate_json(line)
 
@@ -135,7 +135,7 @@ class ChatAgent:
         self.llm = llm
         self.model_id = llm.metadata.model_name
 
-    def ask(self, question: str) -> str:
-        response = self.llm.chat([ChatMessage(content=question)])
+    def ask(self, question: str, max_tokens: int) -> str:
+        response = self.llm.chat([ChatMessage(content=question)], max_tokens=max_tokens)
         answer = str(response)
         return answer

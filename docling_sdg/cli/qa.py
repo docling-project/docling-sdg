@@ -71,21 +71,21 @@ def set_watsonx_options(options: LlmOptions) -> None:
             str
         ).validate_python(os.environ.get("WATSONX_DECODING_METHOD"))
     if "WATSONX_MIN_NEW_TOKENS" in os.environ and options.additional_params:
-        options.additional_params[GenTextParamsMetaNames.MIN_NEW_TOKENS] = (
-            os.environ.get("WATSONX_MIN_NEW_TOKENS")
-        )
+        options.additional_params[GenTextParamsMetaNames.MIN_NEW_TOKENS] = TypeAdapter(
+            int
+        ).validate_python((os.environ.get("WATSONX_MIN_NEW_TOKENS")))
     if "WATSONX_TEMPERATURE" in os.environ and options.additional_params:
-        options.additional_params[GenTextParamsMetaNames.TEMPERATURE] = os.environ.get(
-            "WATSONX_TEMPERATURE"
-        )
+        options.additional_params[GenTextParamsMetaNames.TEMPERATURE] = TypeAdapter(
+            float
+        ).validate_python(os.environ.get("WATSONX_TEMPERATURE"))
     if "WATSONX_TOP_K" in os.environ and options.additional_params:
-        options.additional_params[GenTextParamsMetaNames.TOP_K] = os.environ.get(
-            "WATSONX_TOP_K"
-        )
+        options.additional_params[GenTextParamsMetaNames.TOP_K] = TypeAdapter(
+            int
+        ).validate_python((os.environ.get("WATSONX_TOP_K")))
     if "WATSONX_TOP_P" in os.environ and options.additional_params:
-        options.additional_params[GenTextParamsMetaNames.TOP_P] = os.environ.get(
-            "WATSONX_TOP_P"
-        )
+        options.additional_params[GenTextParamsMetaNames.TOP_P] = TypeAdapter(
+            float
+        ).validate_python(os.environ.get("WATSONX_TOP_P"))
 
 
 @app.command(
@@ -163,7 +163,7 @@ def sample(
         typer.Option(
             "--seed",
             "-s",
-            get_option_desc("seed", SampleOptions),
+            help=get_option_desc("seed", SampleOptions),
         ),
     ] = get_option_def("seed", SampleOptions),
 ) -> None:

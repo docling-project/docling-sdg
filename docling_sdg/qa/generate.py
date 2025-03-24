@@ -10,7 +10,8 @@ import tqdm
 from llama_index.core import PromptTemplate
 from llama_index.core.prompts.utils import format_string
 from llama_index.llms.ibm import WatsonxLLM
-from pydantic import ConfigDict, validate_call
+from llama_index.llms.ibm.base import GenTextParamsMetaNames
+from pydantic import ConfigDict, TypeAdapter, validate_call
 
 from docling_core.types.nlp.qa_labels import QAInformationLabel, QALabelling
 
@@ -45,11 +46,18 @@ class Generator:
             {label for prt in self.options.prompts for label in prt.labels or []}
         )
 
+        temp: float = 0.0
+        if self.options.additional_params:
+            temp = TypeAdapter(float).validate_python(
+                self.options.additional_params.get(GenTextParamsMetaNames.TEMPERATURE)
+            )
         llm = WatsonxLLM(
             model_id=self.options.model_id,
-            url=self.options.url,
-            project_id=self.options.project_id,
-            apikey=self.options.api_key,
+            url=str(self.options.url),
+            project_id=self.options.project_id.get_secret_value(),
+            apikey=self.options.api_key.get_secret_value(),
+            max_new_tokens=self.options.max_new_tokens,
+            temperature=temp,
             additional_params=self.options.additional_params,
         )
 
@@ -86,7 +94,9 @@ class Generator:
         prompt = format_string(prompt_template.template, **key_dict).strip()
 
         return (
-            self.agent.ask(question=prompt).replace("\n", " ").strip(),
+            self.agent.ask(question=prompt, max_tokens=self.options.max_new_tokens)
+            .replace("\n", " ")
+            .strip(),
             prompt.strip(),
         )
 
