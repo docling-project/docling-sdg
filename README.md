@@ -24,10 +24,13 @@ PDF, HTML, or DOCX, leveraging Docling's parsing capabilities
 
 ## Installation
 
-To use Docling SDG, simply install `docling-sdg` from your package manager, e.g., pip:
+To use Docling SDG locally, simply clone this repository. You can use [uv](https://docs.astral.sh/uv) for
+creating a virtual environment, installing the packages, and running the project commands.
 
 ```bash
-pip install docling-sdg
+git clone git@github.com:docling-project/docling-sdg.git
+cd docling-sdg
+uv sync
 ```
 
 ## Getting started
