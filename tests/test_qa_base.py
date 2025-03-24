@@ -1,10 +1,21 @@
 """Test module core/qa/base.py."""
 
 import pytest
+from llama_index.llms.ibm import WatsonxLLM
+from llama_index.llms.openai_like import OpenAILike
 
-from docling_sdg.qa.base import QaPromptTemplate
+from docling_sdg.qa.base import QaPromptTemplate, LlmOptions, LlmProviders, initialize_llm
 from docling_sdg.qa.prompts.generation_prompts import PromptTypes
 
+def test_llm_init() -> None:
+    options = LlmOptions()
+    options.provider = LlmProviders.WATSONX
+    llm = initialize_llm(options)
+    assert isinstance(llm, WatsonxLLM)
+
+    options.provider = LlmProviders.OPENAI_LIKE
+    llm = initialize_llm(options)
+    assert isinstance(llm, OpenAILike)
 
 def test_qa_prompt_template() -> None:
     template = (
