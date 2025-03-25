@@ -71,6 +71,7 @@ class SampleOptions(BaseModel):
     seed: int = Field(default=0, description="Random seed for sampling.")
 
 class LlmProviders(str, Enum):
+    OPENAI = 'openai'
     OPENAI_LIKE = 'openai_like'
     WATSONX = 'watsonx'
 
@@ -240,6 +241,14 @@ def initialize_llm(llm_options: Optional[LlmOptions] = None) -> LLM:
         raise ValueError("API key is required")
 
     match llm_options.provider:
+        case LlmProviders.OPENAI:
+            from llama_index.llms.openai import OpenAI
+
+            return OpenAI(
+                model=llm_options.model_id,
+                api_key=llm_options.api_key,
+                max_tokens=llm_options.max_new_tokens,
+                temperature=llm_options.additional_params[GenTextParamsMetaNames.TEMPERATURE],
         case LlmProviders.OPENAI_LIKE:
             from llama_index.llms.openai_like import OpenAILike
 
