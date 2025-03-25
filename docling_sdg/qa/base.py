@@ -11,7 +11,8 @@ from pydantic import (
     BaseModel,
     Field,
     NonNegativeInt,
-    SecretStr, TypeAdapter,
+    SecretStr, 
+    TypeAdapter,
 )
 
 from docling_core.transforms.chunker import DocChunk, DocMeta
