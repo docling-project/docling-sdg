@@ -69,7 +69,7 @@ Issues = "https://github.com/docling-project/docling-sdg/issues"
 Changelog = "https://github.com/docling-project/docling-sdg/blob/main/CHANGELOG.md"
 
 [tool.setuptools.packages.find]
-include = ["docling_sdg"]
+include = ["docling_sdg*"]
 
 [tool.uv]
 package = true
