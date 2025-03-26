@@ -8,10 +8,9 @@ from typing import Iterator
 
 import tqdm
 from llama_index.core import PromptTemplate
+from llama_index.core.llms.llm import LLM
 from llama_index.core.prompts.utils import format_string
-from llama_index.llms.ibm import WatsonxLLM
-from llama_index.llms.ibm.base import GenTextParamsMetaNames
-from pydantic import ConfigDict, TypeAdapter, validate_call
+from pydantic import ConfigDict, validate_call
 
 from docling_core.types.nlp.qa_labels import QAInformationLabel, QALabelling
 
@@ -21,6 +20,7 @@ from docling_sdg.qa.base import (
     GenQAC,
     QaChunk,
     Status,
+    initialize_llm,
 )
 from docling_sdg.qa.prompts.generation_prompts import PromptTypes
 from docling_sdg.qa.utils import (
@@ -46,22 +46,8 @@ class Generator:
             {label for prt in self.options.prompts for label in prt.labels or []}
         )
 
-        temp: float = 0.0
-        if self.options.additional_params:
-            temp = TypeAdapter(float).validate_python(
-                self.options.additional_params.get(GenTextParamsMetaNames.TEMPERATURE)
-            )
-        llm = WatsonxLLM(
-            model_id=self.options.model_id,
-            url=str(self.options.url),
-            project_id=self.options.project_id.get_secret_value(),
-            apikey=self.options.api_key.get_secret_value(),
-            max_new_tokens=self.options.max_new_tokens,
-            temperature=temp,
-            additional_params=self.options.additional_params,
-        )
-
-        self.agent = ChatAgent(llm=llm)
+        self.llm: LLM = initialize_llm(generate_options)
+        self.agent = ChatAgent(llm=self.llm)
 
     def generate_from_prompt(
         self,

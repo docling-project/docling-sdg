@@ -4,10 +4,9 @@ from pathlib import Path
 from typing import Iterator
 
 import tqdm
+from llama_index.core.llms.llm import LLM
 from llama_index.core.prompts.utils import format_string
-from llama_index.llms.ibm import WatsonxLLM
-from llama_index.llms.ibm.base import GenTextParamsMetaNames
-from pydantic import ConfigDict, TypeAdapter, ValidationError, validate_call
+from pydantic import ConfigDict, ValidationError, validate_call
 
 from docling_sdg.qa.base import (
     Critique,
@@ -15,6 +14,7 @@ from docling_sdg.qa.base import (
     CritiqueResult,
     GenQAC,
     Status,
+    initialize_llm,
 )
 from docling_sdg.qa.utils import (
     ChatAgent,
@@ -31,24 +31,9 @@ class Judge:
         self,
         critique_options: CritiqueOptions,
     ):
-        self.options = critique_options
-
-        temp: float = 0.0
-        if self.options.additional_params:
-            temp = TypeAdapter(float).validate_python(
-                self.options.additional_params.get(GenTextParamsMetaNames.TEMPERATURE)
-            )
-        llm = WatsonxLLM(
-            model_id=self.options.model_id,
-            url=str(self.options.url),
-            project_id=self.options.project_id.get_secret_value(),
-            apikey=self.options.api_key.get_secret_value(),
-            max_new_tokens=self.options.max_new_tokens,
-            temperature=temp,
-            additional_params=self.options.additional_params,
-        )
-
-        self.agent = ChatAgent(llm=llm)
+        self.options = critique_options or CritiqueOptions()
+        self.llm: LLM = initialize_llm(critique_options)
+        self.agent = ChatAgent(llm=self.llm)
 
     @staticmethod
     def _get_eval_and_score(reply: str) -> Critique:
