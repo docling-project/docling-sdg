@@ -24,7 +24,13 @@ PDF, HTML, or DOCX, leveraging Docling's parsing capabilities
 
 ## Installation
 
-To use Docling SDG locally, simply clone this repository. You can use [uv](https://docs.astral.sh/uv) for
+To use Docling SDG, simply install `docling-sdg` from your package manager, e.g., pip:
+
+```bash
+pip install docling-sdg
+```
+
+Alternatively, you can clone this repository and use [uv](https://docs.astral.sh/uv) for
 creating a virtual environment, installing the packages, and running the project commands.
 
 ```bash
@@ -156,10 +162,11 @@ If you use Docling SDG in your projects, please consider citing the following:
 The Docling SDG codebase is under MIT license.
 For individual model usage, please refer to the model licenses found in the original packages.
 
+## LF AI & Data
+
+Docling is hosted as a project in the [LF AI & Data Foundation](https://lfaidata.foundation/projects/).
+
 ### IBM ❤️ Open Source AI
 
 The project was started by the AI for knowledge team at IBM Research Zurich.
-
-[supported_formats]: https://docling-project.github.io/docling/usage/supported_formats/
-
 
