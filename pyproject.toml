@@ -54,7 +54,7 @@ dev = [
     "mypy>=1.15.0",
     "pre-commit>=4.1.0",
     "pytest>=8.3.5",
-    "python-semantic-release>=7.32.2",
+    "python-semantic-release~=7.32",
     "ruff>=0.10.0",
     "types-setuptools>=70.3.0",
 ]
