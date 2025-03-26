@@ -1,3 +1,9 @@
+## [v0.1.2](https://github.com/docling-project/docling-sdg/releases/tag/v0.1.2) - 2025-03-26
+
+### Fix
+
+* Provide pypi password when publishing distribution ([#18](https://github.com/docling-project/docling-sdg/issues/18)) ([`d18794b`](https://github.com/docling-project/docling-sdg/commit/d18794b686f49ba54506fce613f9bbce49cc3d0a))
+
 ## [v0.1.1](https://github.com/docling-project/docling-sdg/releases/tag/v0.1.1) - 2025-03-26
 
 ### Fix
