@@ -249,6 +249,7 @@ def initialize_llm(llm_options: Optional[LlmOptions] = None) -> LLM:
                 api_key=llm_options.api_key,
                 max_tokens=llm_options.max_new_tokens,
                 temperature=llm_options.additional_params[GenTextParamsMetaNames.TEMPERATURE],
+            )
         case LlmProviders.OPENAI_LIKE:
             from llama_index.llms.openai_like import OpenAILike
 
