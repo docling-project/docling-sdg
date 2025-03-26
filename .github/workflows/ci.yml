@@ -1,0 +1,16 @@
+name: "Run CI"
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  code-checks:
+    uses: ./.github/workflows/checks.yml
+    permissions:
+      packages: write
+      contents: read
+      attestations: write
+      id-token: write
