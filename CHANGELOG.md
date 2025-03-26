@@ -1,3 +1,9 @@
+## [v0.1.1](https://github.com/docling-project/docling-sdg/releases/tag/v0.1.1) - 2025-03-26
+
+### Fix
+
+* Fix pypi release config ([#17](https://github.com/docling-project/docling-sdg/issues/17)) ([`c149f3e`](https://github.com/docling-project/docling-sdg/commit/c149f3e55a96516c4f9298e92ce83f6ea73177d9))
+
 ## [v0.1.0](https://github.com/docling-project/docling-sdg/releases/tag/v0.1.0) - 2025-03-26
 
 ### Feature
