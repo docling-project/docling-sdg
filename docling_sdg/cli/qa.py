@@ -296,7 +296,7 @@ def generate(
     load_dotenv(watsonx)
 
     options = GenerateOptions(
-        project_id=os.environ.get("WATSONX_INSTANCE_ID"),
+        project_id=os.environ.get("WATSONX_PROJECT_ID"),
         api_key=os.environ.get("WATSONX_APIKEY"),
     )
 
@@ -380,7 +380,7 @@ def critique(
     load_dotenv(watsonx)
 
     options = CritiqueOptions(
-        project_id=os.environ.get("WATSONX_INSTANCE_ID"),
+        project_id=os.environ.get("WATSONX_PROJECT_ID"),
         api_key=os.environ.get("WATSONX_APIKEY"),
     )
 
