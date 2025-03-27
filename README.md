@@ -68,20 +68,22 @@ For each passage created in the previous step, we can prompt an LLM and generate
 types: _simple fact_, _summary_, and _reasoning_.
 
 Note that Docling SDG uses [watsonx.ai](https://www.ibm.com/products/watsonx-ai) and you will need to provide a
-watsonx.ai instance ID and an API key.
+watsonx.ai project ID, an API key, and a URL (the URL is optional with default value `https://us-south.ml.cloud.ibm.com`).
 
 ```python
 import os
 from docling_sdg.qa.base import GenerateOptions
 from docling_sdg.qa.generate import Generator
+from pathlib import Path
 
 options = GenerateOptions(
-    project_id=os.environ.get("WATSONX_INSTANCE_ID"),
+    project_id=os.environ.get("WATSONX_PROJECT_ID"),
     api_key=os.environ.get("WATSONX_APIKEY"),
+    url=os.environ.get("WATSONX_URL"),
 )
 
 generator = Generator(generate_options=options)
-print(generator.generate_from_sample("docling_sdg_sample.jsonl"))
+print(generator.generate_from_sample(Path("docling_sdg_sample.jsonl")))
 ```
 
 By default, the results will be exported to the file `docling_sdg_generated_qac.jsonl`. Every line represents a generated
@@ -98,14 +100,16 @@ those evaluations, we can filter the generated dataset to the required quality l
 import os
 from docling_sdg.qa.base import CritiqueOptions
 from docling_sdg.qa.critique import Judge
+from pathlib import Path
 
 options = CritiqueOptions(
-    project_id=os.environ.get("WATSONX_INSTANCE_ID"),
+    project_id=os.environ.get("WATSONX_PROJECT_ID"),
     api_key=os.environ.get("WATSONX_APIKEY"),
+    url=os.environ.get("WATSONX_URL"),
 )
 
 judge = Judge(critique_options=options)
-print(judge.critique("docling_sdg_generated_qac.jsonl"))
+print(judge.critique(Path("docling_sdg_generated_qac.jsonl")))
 ```
 
 By default, the results will be exported to the file `docling_sdg_critiqued_qac.jsonl`. The file content is similar to 
