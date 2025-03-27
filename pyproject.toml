@@ -33,14 +33,13 @@ classifiers=[
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
-    "Programming Language :: Python :: 3.13",
     "Topic :: Scientific/Engineering :: Artificial Intelligence",
     "Topic :: Scientific/Engineering :: Information Analysis",
     "Topic :: Software Development :: Build Tools",
     "Topic :: Software Development :: Libraries :: Python Modules",
     "Typing :: Typed",
 ]
-requires-python = ">=3.10"
+requires-python = ">=3.10,<3.13"
 dependencies = [
     "docling>=2.26.0",
     "docling-core[chunking]>=2.23.0",
@@ -51,6 +50,7 @@ dependencies = [
     "transformers>=4.42.4",
     "typer>=0.12.5",
     "typing-extensions>=4.12.2",
+    "llama-index-llms-openai-like (>=0.3.4,<0.4.0)",
 ]
 
 [dependency-groups]
