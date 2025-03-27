@@ -1,3 +1,9 @@
+<p align="center">
+  <a href="https://github.com/docling-project/docling-sdg">
+    <img loading="lazy" alt="Docling" src="docs/assets/docling-sdg-pic.png" width="40%"/>
+  </a>
+</p>
+
 # Docling SDG
 
 [![Platforms](https://img.shields.io/badge/platform-macos%20|%20linux%20|%20windows-blue)](https://github.com/docling-project/docling-parse/)
