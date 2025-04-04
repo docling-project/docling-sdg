@@ -246,7 +246,7 @@ def initialize_llm(llm_options: Optional[LlmOptions] = None) -> LLM:
 
             return OpenAI(
                 model=llm_options.model_id,
-                api_key=llm_options.api_key,
+                api_key=llm_options.api_key.get_secret_value(),
                 max_tokens=llm_options.max_new_tokens,
                 temperature=llm_options.additional_params[GenTextParamsMetaNames.TEMPERATURE],
             )
@@ -256,7 +256,7 @@ def initialize_llm(llm_options: Optional[LlmOptions] = None) -> LLM:
             return OpenAILike(
                 model=llm_options.model_id,
                 api_base=llm_options.url,
-                api_key=llm_options.api_key,
+                api_key=llm_options.api_key.get_secret_value(),
                 max_tokens=llm_options.max_new_tokens,
                 temperature=llm_options.additional_params[GenTextParamsMetaNames.TEMPERATURE],
             )
@@ -269,7 +269,7 @@ def initialize_llm(llm_options: Optional[LlmOptions] = None) -> LLM:
                 model_id=llm_options.model_id,
                 url=llm_options.url,
                 project_id=llm_options.project_id,
-                apikey=llm_options.api_key,
+                apikey=llm_options.api_key.get_secret_value(),
                 temperature=llm_options.additional_params[GenTextParamsMetaNames.TEMPERATURE],
                 additional_params=llm_options.additional_params,
             )
