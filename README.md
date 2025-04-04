@@ -75,8 +75,11 @@ By default, the results will be exported to the file `docling_sdg_sample.jsonl`.
 For each passage created in the previous step, we can prompt an LLM and generate 3 different questions of the following
 types: _simple fact_, _summary_, and _reasoning_.
 
-Note that Docling SDG uses [watsonx.ai](https://www.ibm.com/products/watsonx-ai) and you will need to provide a
-watsonx.ai project ID, an API key, and a URL (the URL is optional with default value `https://us-south.ml.cloud.ibm.com`).
+`GenerateOptions` controls which model is used for QA generation by setting `generate_options.provider` below. Three options are available:
+
+* `LlmProviders.WATSONX` for [watsonx.ai](https://www.ibm.com/products/watsonx-ai);, you will need to provide a watsonx.ai instance ID and an API key.
+* `LlmProviders.OPENAI` for OpenAI; you will need to provide an OpenAI API key
+* `LlmProviders.OPENAI_LIKE` for any model provider with OpenAI compatible APIs; if no API key is needed (such as when running against `ollama` locally), set `api_key` to any string, e.g. `"fake"`
 
 ```python
 import os
