@@ -237,12 +237,15 @@ class GenQAC(QAPair[BaseModel]):
     )
 
 
-def initialize_llm(llm_options: LlmOptions) -> LLM:
+def require_api_key(llm_options: LlmOptions) -> None:
     if llm_options.api_key is None:
         raise ValueError("API key is required")
 
+def initialize_llm(llm_options: LlmOptions) -> LLM:
     match llm_options.provider:
         case LlmProvider.OPENAI:
+            require_api_key(llm_options)
+
             from llama_index.llms.openai import OpenAI
 
             return OpenAI(
@@ -266,6 +269,8 @@ def initialize_llm(llm_options: LlmOptions) -> LLM:
                 ],
             )
         case LlmProvider.WATSONX:
+            require_api_key(llm_options)
+
             if llm_options.project_id is None:
                 raise ValueError("Project ID is required")
 
