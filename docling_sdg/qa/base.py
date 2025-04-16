@@ -78,10 +78,7 @@ class LlmProvider(str, Enum):
 
 
 class LlmOptions(BaseModel):
-    """Generative AI options for Q&A generation.
-
-    Currently, only support watsonx.ai.
-    """
+    "Generative AI options for Q&A generation."
 
     provider: LlmProvider = Field(
         default=LlmProvider.OPENAI_LIKE,
