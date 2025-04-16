@@ -14,13 +14,13 @@ from docling_sdg.qa.base import (
     CritiqueResult,
     GenQAC,
     Status,
-    initialize_llm,
 )
 from docling_sdg.qa.utils import (
     ChatAgent,
     retrieve_stored_qac,
     retrieve_stored_qac_ids,
     save_to_file,
+    initialize_llm,
 )
 
 _log = logging.getLogger(__name__)

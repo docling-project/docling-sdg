@@ -20,7 +20,6 @@ from docling_sdg.qa.base import (
     GenQAC,
     QaChunk,
     Status,
-    initialize_llm,
 )
 from docling_sdg.qa.prompts.generation_prompts import PromptTypes
 from docling_sdg.qa.utils import (
@@ -30,6 +29,7 @@ from docling_sdg.qa.utils import (
     retrieve_stored_passages,
     retrieve_stored_qac_ids,
     save_to_file,
+    initialize_llm,
 )
 
 _log = logging.getLogger(__name__)

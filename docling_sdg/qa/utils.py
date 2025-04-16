@@ -25,6 +25,57 @@ _FORBIDDEN_TERMS: Final = [
 ]
 
 
+def require_api_key(llm_options: LlmOptions) -> None:
+    if llm_options.api_key is None:
+        raise ValueError("API key is required")
+
+def initialize_llm(llm_options: LlmOptions) -> LLM:
+    match llm_options.provider:
+        case LlmProvider.OPENAI:
+            require_api_key(llm_options)
+
+            from llama_index.llms.openai import OpenAI
+
+            return OpenAI(
+                model=llm_options.model_id,
+                api_key=llm_options.api_key.get_secret_value(),
+                max_tokens=llm_options.max_new_tokens,
+                temperature=llm_options.additional_params[
+                    GenTextParamsMetaNames.TEMPERATURE
+                ],
+            )
+        case LlmProvider.OPENAI_LIKE:
+            from llama_index.llms.openai_like import OpenAILike
+
+            return OpenAILike(
+                model=llm_options.model_id,
+                api_base=llm_options.url,
+                api_key=llm_options.api_key.get_secret_value(),
+                max_tokens=llm_options.max_new_tokens,
+                temperature=llm_options.additional_params[
+                    GenTextParamsMetaNames.TEMPERATURE
+                ],
+            )
+        case LlmProvider.WATSONX:
+            require_api_key(llm_options)
+
+            if llm_options.project_id is None:
+                raise ValueError("Project ID is required")
+
+            from llama_index.llms.ibm import WatsonxLLM
+
+            return WatsonxLLM(
+                model_id=llm_options.model_id,
+                url=llm_options.url,
+                project_id=llm_options.project_id,
+                apikey=llm_options.api_key.get_secret_value(),
+                temperature=llm_options.additional_params[
+                    GenTextParamsMetaNames.TEMPERATURE
+                ],
+                additional_params=llm_options.additional_params,
+            )
+
+
 def get_qa_chunks(
     dl_id: str,
     chunks: Iterator[DocChunk],
