@@ -14,7 +14,10 @@ from docling_sdg.qa.prompts.generation_prompts import PromptTypes
 
 
 def test_llm_init() -> None:
-    options = LlmOptions()
+    options = LlmOptions(
+        project_id="any_project_id",
+        api_key="fake",
+    )
     options.provider = LlmProviders.WATSONX
     llm = initialize_llm(options)
     assert isinstance(llm, WatsonxLLM)

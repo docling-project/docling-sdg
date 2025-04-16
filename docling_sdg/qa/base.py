@@ -240,7 +240,7 @@ class GenQAC(QAPair[BaseModel]):
     )
 
 
-def initialize_llm(llm_options: Optional[LlmOptions] = None) -> LLM:
+def initialize_llm(llm_options: LlmOptions) -> LLM:
     if llm_options.api_key is None:
         raise ValueError("API key is required")
 
