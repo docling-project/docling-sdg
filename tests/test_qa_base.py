@@ -8,9 +8,9 @@ from docling_sdg.qa.base import (
     LlmOptions,
     LlmProvider,
     QaPromptTemplate,
-    initialize_llm,
 )
 from docling_sdg.qa.prompts.generation_prompts import PromptTypes
+from docling_sdg.qa.utils import initialize_llm
 
 
 def test_llm_init() -> None:

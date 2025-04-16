@@ -13,7 +13,14 @@ from pydantic import BaseModel
 
 from docling_core.transforms.chunker import DocChunk
 
-from docling_sdg.qa.base import GenQAC, QaChunk, QaMeta
+from docling_sdg.qa.base import (
+    GenQAC,
+    GenTextParamsMetaNames,
+    LlmOptions,
+    LlmProvider,
+    QaChunk,
+    QaMeta,
+)
 
 BaseModelT = TypeVar("BaseModelT", bound=BaseModel)
 

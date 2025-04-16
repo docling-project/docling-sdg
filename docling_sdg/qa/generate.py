@@ -24,6 +24,7 @@ from docling_sdg.qa.base import (
 from docling_sdg.qa.prompts.generation_prompts import PromptTypes
 from docling_sdg.qa.utils import (
     ChatAgent,
+    initialize_llm,
     postprocess_answer,
     postprocess_question,
     retrieve_stored_passages,

@@ -17,6 +17,7 @@ from docling_sdg.qa.base import (
 )
 from docling_sdg.qa.utils import (
     ChatAgent,
+    initialize_llm,
     retrieve_stored_qac,
     retrieve_stored_qac_ids,
     save_to_file,

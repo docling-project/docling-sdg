@@ -4,7 +4,6 @@ from enum import Enum
 from pathlib import Path
 from typing import Annotated, Any, Optional
 
-from llama_index.core.llms.llm import LLM
 from llama_index.llms.ibm.base import GenTextParamsMetaNames
 from pydantic import (
     AnyUrl,
@@ -78,7 +77,7 @@ class LlmProvider(str, Enum):
 
 
 class LlmOptions(BaseModel):
-    "Generative AI options for Q&A generation."
+    """Generative AI options for Q&A generation."""
 
     provider: LlmProvider = Field(
         default=LlmProvider.OPENAI_LIKE,
