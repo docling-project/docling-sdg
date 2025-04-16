@@ -2,7 +2,14 @@ name: Run checks
 
 on:
   workflow_call:
-
+    inputs:
+      push_coverage:
+        type: boolean
+        description: "If true, the coverage results are pushed to codecov.io."
+        default: true
+    secrets:
+        CODECOV_TOKEN:
+          required: false
 jobs:
   run-checks:
     runs-on: ubuntu-latest
@@ -21,4 +28,10 @@ jobs:
       - name: Run styling check
         run: uv run --no-sync pre-commit run --all-files
       - name: Testing
-        run: uv run --no-sync pytest -v tests
+        run: uv run --no-sync pytest -v --cov=docling_sdg --cov-report=xml tests
+      - name: Upload coverage to Codecov
+        if: inputs.push_coverage
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./coverage.xml

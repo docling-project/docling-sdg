@@ -9,6 +9,8 @@ on:
 jobs:
   code-checks:
     uses: ./.github/workflows/checks.yml
+    secrets:
+      CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
     permissions:
       packages: write
       contents: read
