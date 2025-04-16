@@ -11,7 +11,7 @@ from pydantic import (
     BaseModel,
     Field,
     NonNegativeInt,
-    SecretStr, TypeAdapter,
+    SecretStr,
 )
 
 from docling_core.transforms.chunker import DocChunk, DocMeta
@@ -70,19 +70,22 @@ class SampleOptions(BaseModel):
     )
     seed: int = Field(default=0, description="Random seed for sampling.")
 
+
 class LlmProviders(str, Enum):
-    OPENAI = 'openai'
-    OPENAI_LIKE = 'openai_like'
-    WATSONX = 'watsonx'
+    OPENAI = "openai"
+    OPENAI_LIKE = "openai_like"
+    WATSONX = "watsonx"
+
 
 class LlmOptions(BaseModel):
     """Generative AI options for Q&A generation.
 
     Currently, only support watsonx.ai.
     """
+
     provider: LlmProviders = Field(
         default=LlmProviders.OPENAI_LIKE,
-        description=f"LLM provider: [{','.join(LlmProviders)}]"
+        description=f"LLM provider: [{','.join(LlmProviders)}]",
     )
     url: AnyUrl = Field(
         default=AnyUrl("http://127.0.0.1:11434/v1"),
@@ -236,6 +239,7 @@ class GenQAC(QAPair[BaseModel]):
         default={}, description="A set of critiques for each supported dimension."
     )
 
+
 def initialize_llm(llm_options: Optional[LlmOptions] = None) -> LLM:
     if llm_options.api_key is None:
         raise ValueError("API key is required")
@@ -248,7 +252,9 @@ def initialize_llm(llm_options: Optional[LlmOptions] = None) -> LLM:
                 model=llm_options.model_id,
                 api_key=llm_options.api_key.get_secret_value(),
                 max_tokens=llm_options.max_new_tokens,
-                temperature=llm_options.additional_params[GenTextParamsMetaNames.TEMPERATURE],
+                temperature=llm_options.additional_params[
+                    GenTextParamsMetaNames.TEMPERATURE
+                ],
             )
         case LlmProviders.OPENAI_LIKE:
             from llama_index.llms.openai_like import OpenAILike
@@ -258,18 +264,23 @@ def initialize_llm(llm_options: Optional[LlmOptions] = None) -> LLM:
                 api_base=llm_options.url,
                 api_key=llm_options.api_key.get_secret_value(),
                 max_tokens=llm_options.max_new_tokens,
-                temperature=llm_options.additional_params[GenTextParamsMetaNames.TEMPERATURE],
+                temperature=llm_options.additional_params[
+                    GenTextParamsMetaNames.TEMPERATURE
+                ],
             )
         case LlmProviders.WATSONX:
             if llm_options.project_id is None:
                 raise ValueError("Project ID is required")
 
             from llama_index.llms.ibm import WatsonxLLM
+
             return WatsonxLLM(
                 model_id=llm_options.model_id,
                 url=llm_options.url,
                 project_id=llm_options.project_id,
                 apikey=llm_options.api_key.get_secret_value(),
-                temperature=llm_options.additional_params[GenTextParamsMetaNames.TEMPERATURE],
+                temperature=llm_options.additional_params[
+                    GenTextParamsMetaNames.TEMPERATURE
+                ],
                 additional_params=llm_options.additional_params,
             )
