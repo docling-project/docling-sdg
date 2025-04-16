@@ -75,7 +75,7 @@ By default, the results will be exported to the file `docling_sdg_sample.jsonl`.
 For each passage created in the previous step, we can prompt an LLM and generate 3 different questions of the following
 types: _simple fact_, _summary_, and _reasoning_.
 
-`GenerateOptions` controls which model is used for QA generation by setting `generate_options.provider` below. Three options are available:
+The `GenerateOptions` class controls which model provider is used for Q&A generation by setting the `provider` attribute, as shown below. Three options are available:
 
 * `LlmProviders.WATSONX` for [watsonx.ai](https://www.ibm.com/products/watsonx-ai);, you will need to provide a watsonx.ai instance ID and an API key.
 * `LlmProviders.OPENAI` for OpenAI; you will need to provide an OpenAI API key
