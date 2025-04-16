@@ -6,7 +6,7 @@ from llama_index.llms.openai_like import OpenAILike
 
 from docling_sdg.qa.base import (
     LlmOptions,
-    LlmProviders,
+    LlmProvider,
     QaPromptTemplate,
     initialize_llm,
 )
@@ -18,11 +18,11 @@ def test_llm_init() -> None:
         project_id="any_project_id",
         api_key="fake",
     )
-    options.provider = LlmProviders.WATSONX
+    options.provider = LlmProvider.WATSONX
     llm = initialize_llm(options)
     assert isinstance(llm, WatsonxLLM)
 
-    options.provider = LlmProviders.OPENAI_LIKE
+    options.provider = LlmProvider.OPENAI_LIKE
     llm = initialize_llm(options)
     assert isinstance(llm, OpenAILike)
 

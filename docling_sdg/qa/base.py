@@ -71,7 +71,7 @@ class SampleOptions(BaseModel):
     seed: int = Field(default=0, description="Random seed for sampling.")
 
 
-class LlmProviders(str, Enum):
+class LlmProvider(str, Enum):
     OPENAI = "openai"
     OPENAI_LIKE = "openai_like"
     WATSONX = "watsonx"
@@ -83,9 +83,9 @@ class LlmOptions(BaseModel):
     Currently, only support watsonx.ai.
     """
 
-    provider: LlmProviders = Field(
-        default=LlmProviders.OPENAI_LIKE,
-        description=f"LLM provider: [{','.join(LlmProviders)}]",
+    provider: LlmProvider = Field(
+        default=LlmProvider.OPENAI_LIKE,
+        description=f"LLM provider: [{','.join(LlmProvider)}]",
     )
     url: AnyUrl = Field(
         default=AnyUrl("http://127.0.0.1:11434/v1"),
@@ -245,7 +245,7 @@ def initialize_llm(llm_options: LlmOptions) -> LLM:
         raise ValueError("API key is required")
 
     match llm_options.provider:
-        case LlmProviders.OPENAI:
+        case LlmProvider.OPENAI:
             from llama_index.llms.openai import OpenAI
 
             return OpenAI(
@@ -256,7 +256,7 @@ def initialize_llm(llm_options: LlmOptions) -> LLM:
                     GenTextParamsMetaNames.TEMPERATURE
                 ],
             )
-        case LlmProviders.OPENAI_LIKE:
+        case LlmProvider.OPENAI_LIKE:
             from llama_index.llms.openai_like import OpenAILike
 
             return OpenAILike(
@@ -268,7 +268,7 @@ def initialize_llm(llm_options: LlmOptions) -> LLM:
                     GenTextParamsMetaNames.TEMPERATURE
                 ],
             )
-        case LlmProviders.WATSONX:
+        case LlmProvider.WATSONX:
             if llm_options.project_id is None:
                 raise ValueError("Project ID is required")
 
