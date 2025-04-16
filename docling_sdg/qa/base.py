@@ -91,13 +91,13 @@ class LlmOptions(BaseModel):
         default=AnyUrl("http://127.0.0.1:11434/v1"),
         description="Url to LLM API endpoint",
     )
-    project_id: Annotated[
-        SecretStr, Field(description="ID of the Watson Studio project.")
-    ]
-    api_key: Annotated[
-        SecretStr,
-        Field(description="API key to Watson Machine Learning or CPD instance."),
-    ]
+    project_id: Optional[SecretStr] = Field(
+        default=None, description="ID of the Watson Studio project."
+    )
+    api_key: Optional[SecretStr] = Field(
+        default=None,
+        description="API key to Watson Machine Learning or CPD instance.",
+    )
     model_id: str = Field(
         default="mistralai/mixtral-8x7b-instruct-v01",
         description="Which model to use.",
@@ -105,7 +105,7 @@ class LlmOptions(BaseModel):
     max_new_tokens: int = Field(
         default=512, ge=0, description="The maximum number of tokens to generate."
     )
-    additional_params: Optional[dict[str, Any]] = Field(
+    additional_params: dict[str, Any] = Field(
         default={
             GenTextParamsMetaNames.DECODING_METHOD: "sample",
             GenTextParamsMetaNames.MIN_NEW_TOKENS: 50,
