@@ -30,7 +30,6 @@ from docling_sdg.qa.utils import (
     retrieve_stored_passages,
     retrieve_stored_qac_ids,
     save_to_file,
-    initialize_llm,
 )
 
 _log = logging.getLogger(__name__)

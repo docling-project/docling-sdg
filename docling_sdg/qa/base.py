@@ -234,4 +234,3 @@ class GenQAC(QAPair[BaseModel]):
     critiques: dict[str, Critique] = Field(
         default={}, description="A set of critiques for each supported dimension."
     )
-

@@ -4,7 +4,7 @@ import hashlib
 import os
 import re
 from pathlib import Path
-from typing import Callable, Final, Iterator, Optional, TypeVar, cast
+from typing import Any, Callable, Final, Iterator, Optional, TypeVar, cast
 
 import jsonlines
 from llama_index.core.base.llms.types import ChatMessage
@@ -36,7 +36,8 @@ def require_api_key(llm_options: LlmOptions) -> None:
     if llm_options.api_key is None:
         raise ValueError("API key is required")
 
-def initialize_llm(llm_options: LlmOptions) -> LLM:
+
+def initialize_llm(llm_options: LlmOptions) -> Any:
     match llm_options.provider:
         case LlmProvider.OPENAI:
             require_api_key(llm_options)
@@ -45,7 +46,9 @@ def initialize_llm(llm_options: LlmOptions) -> LLM:
 
             return OpenAI(
                 model=llm_options.model_id,
-                api_key=llm_options.api_key.get_secret_value(),
+                api_key=llm_options.api_key.get_secret_value()
+                if llm_options.api_key is not None
+                else "",
                 max_tokens=llm_options.max_new_tokens,
                 temperature=llm_options.additional_params[
                     GenTextParamsMetaNames.TEMPERATURE
@@ -57,7 +60,9 @@ def initialize_llm(llm_options: LlmOptions) -> LLM:
             return OpenAILike(
                 model=llm_options.model_id,
                 api_base=llm_options.url,
-                api_key=llm_options.api_key.get_secret_value(),
+                api_key=llm_options.api_key.get_secret_value()
+                if llm_options.api_key is not None
+                else "",
                 max_tokens=llm_options.max_new_tokens,
                 temperature=llm_options.additional_params[
                     GenTextParamsMetaNames.TEMPERATURE
@@ -75,7 +80,9 @@ def initialize_llm(llm_options: LlmOptions) -> LLM:
                 model_id=llm_options.model_id,
                 url=llm_options.url,
                 project_id=llm_options.project_id,
-                apikey=llm_options.api_key.get_secret_value(),
+                apikey=llm_options.api_key.get_secret_value()
+                if llm_options.api_key is not None
+                else "",
                 temperature=llm_options.additional_params[
                     GenTextParamsMetaNames.TEMPERATURE
                 ],
