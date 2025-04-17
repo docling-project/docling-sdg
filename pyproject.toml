@@ -166,6 +166,7 @@ plugins = ["pydantic.mypy"]
 module = [
     "transformers.*",
     "llama_index.llms.ibm.*",
+    "llama_index.llms.openai_like.*",
     "tqdm.*",
 ]
 ignore_missing_imports = true

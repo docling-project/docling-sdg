@@ -78,8 +78,8 @@ def initialize_llm(llm_options: LlmOptions) -> Any:
 
             return WatsonxLLM(
                 model_id=llm_options.model_id,
-                url=llm_options.url,
-                project_id=llm_options.project_id,
+                url=str(llm_options.url),
+                project_id=llm_options.project_id.get_secret_value(),
                 apikey=llm_options.api_key.get_secret_value()
                 if llm_options.api_key is not None
                 else "",

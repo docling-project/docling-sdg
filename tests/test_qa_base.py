@@ -3,6 +3,7 @@
 import pytest
 from llama_index.llms.ibm import WatsonxLLM
 from llama_index.llms.openai_like import OpenAILike
+from pydantic import SecretStr
 
 from docling_sdg.qa.base import (
     LlmOptions,
@@ -15,8 +16,8 @@ from docling_sdg.qa.utils import initialize_llm
 
 def test_llm_init() -> None:
     options = LlmOptions(
-        project_id="any_project_id",
-        api_key="fake",
+        project_id=SecretStr("any_project_id"),
+        api_key=SecretStr("fake"),
     )
     options.provider = LlmProvider.WATSONX
     llm = initialize_llm(options)
