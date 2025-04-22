@@ -24,7 +24,6 @@ from docling_sdg.qa.base import (
 
 BaseModelT = TypeVar("BaseModelT", bound=BaseModel)
 
-
 _FORBIDDEN_PREFIXES: Final = ["this", "the", "given", "following"]
 _FORBIDDEN_TEXTUALS: Final = ["paragraph", "context", "text", "passage"]
 _FORBIDDEN_TERMS: Final = [

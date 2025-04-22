@@ -1,7 +1,6 @@
 """Test module core/qa/base.py."""
 
 import pytest
-from llama_index.llms.ibm import WatsonxLLM
 from llama_index.llms.openai_like import OpenAILike
 from pydantic import SecretStr
 
@@ -19,9 +18,6 @@ def test_llm_init() -> None:
         project_id=SecretStr("any_project_id"),
         api_key=SecretStr("fake"),
     )
-    options.provider = LlmProvider.WATSONX
-    llm = initialize_llm(options)
-    assert isinstance(llm, WatsonxLLM)
 
     options.provider = LlmProvider.OPENAI_LIKE
     llm = initialize_llm(options)

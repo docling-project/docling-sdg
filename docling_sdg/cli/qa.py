@@ -22,6 +22,7 @@ from docling_sdg.qa.base import (
     GenerateOptions,
     GenerateResult,
     LlmOptions,
+    LlmProvider,
     SampleOptions,
     SampleResult,
 )
@@ -296,6 +297,7 @@ def generate(
     load_dotenv(watsonx)
 
     options = GenerateOptions(
+        provider=LlmProvider.WATSONX,
         project_id=os.environ.get("WATSONX_PROJECT_ID"),
         api_key=os.environ.get("WATSONX_APIKEY"),
     )
@@ -380,6 +382,7 @@ def critique(
     load_dotenv(watsonx)
 
     options = CritiqueOptions(
+        provider=LlmProvider.WATSONX,
         project_id=os.environ.get("WATSONX_PROJECT_ID"),
         api_key=os.environ.get("WATSONX_APIKEY"),
     )
