@@ -150,6 +150,10 @@ class Generator:
 
                 for this_type, raw_question in generated_qas.items():
                     if this_type not in self.qac_types:
+                        _log.debug(
+                            f"Unexpected generated question type: {this_type}."
+                            f"Requested types were: {self.qac_types}"
+                        )
                         continue
 
                     if not isinstance(raw_question, str):
