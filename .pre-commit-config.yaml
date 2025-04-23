@@ -24,7 +24,7 @@ repos:
       - id: pytest
         name: Pytest
         language: system
-        entry: uv run pytest tests
+        entry: uv run pytest --cov=docling_sdg --cov-report=xml tests
         pass_filenames: false
         files: '\.py$'
   - repo: https://github.com/astral-sh/uv-pre-commit

@@ -25,10 +25,8 @@ jobs:
           enable-cache: true
       - name: Install dependencies
         run: uv sync --all-extras
-      - name: Run styling check
+      - name: Check style and run tests
         run: uv run --no-sync pre-commit run --all-files
-      - name: Testing
-        run: uv run --no-sync pytest -v --cov=docling_sdg --cov-report=xml tests
       - name: Upload coverage to Codecov
         if: inputs.push_coverage
         uses: codecov/codecov-action@v5
