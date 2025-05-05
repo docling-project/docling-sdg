@@ -29,7 +29,7 @@ DEFAULT_COMBINED_QUESTION_PROMPT = (
     '"summary" question>, "reasoning": <the "reasoning" type question you thought '
     'of>, "reasoning_answer": <Answer to the "reasoning" question>}\n'
     "\n"
-    "Only provide the python dictionary as your output.\n"
+    "Only provide the python dictionary as your output. Make sure you provide an answer for each question.\n"
     "\n"
     "Context: {context_str}"
 )
