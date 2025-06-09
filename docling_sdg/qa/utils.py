@@ -61,7 +61,7 @@ def initialize_llm(llm_options: LlmOptions) -> Any:
                 api_base=llm_options.url,
                 api_key=llm_options.api_key.get_secret_value()
                 if llm_options.api_key is not None
-                else "",
+                else "None",
                 max_tokens=llm_options.max_new_tokens,
                 temperature=llm_options.additional_params[
                     GenTextParamsMetaNames.TEMPERATURE
