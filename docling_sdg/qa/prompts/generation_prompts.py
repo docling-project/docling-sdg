@@ -136,6 +136,7 @@ class PromptTypes(str, Enum):
 
     QUESTION = "question"
     ANSWER = "answer"
+    TOPIC = "topic"
 
 
 class QaPromptTemplate(BaseModel):
@@ -162,43 +163,43 @@ default_combined_question_qa_prompt: QaPromptTemplate = QaPromptTemplate(
     template=DEFAULT_COMBINED_QUESTION_PROMPT,
     keys=["context_str"],
     labels=["fact_single", "summary", "reasoning"],
-    type_="question",
+    type_=PromptTypes.QUESTION,
 )
 default_fact_single_question_qa_prompt: QaPromptTemplate = QaPromptTemplate(
     template=DEFAULT_FACT_SINGLE_QUESTION_PROMPT,
     keys=["context_str"],
     labels=["fact_single"],
-    type_="question",
+    type_=PromptTypes.QUESTION,
 )
 default_fact_single_answer_qa_prompt: QaPromptTemplate = QaPromptTemplate(
     template=DEFAULT_FACT_SINGLE_ANSWER_PROMPT,
     keys=["context_str", "question_str"],
     labels=["fact_single"],
-    type_="answer",
+    type_=PromptTypes.ANSWER,
 )
 default_summary_question_qa_prompt: QaPromptTemplate = QaPromptTemplate(
     template=DEFAULT_SUMMARY_QUESTION_PROMPT,
     keys=["context_str"],
     labels=["summary"],
-    type_="question",
+    type_=PromptTypes.QUESTION,
 )
 default_summary_answer_qa_prompt: QaPromptTemplate = QaPromptTemplate(
     template=DEFAULT_SUMMARY_ANSWER_PROMPT,
     keys=["context_str", "question_str"],
     labels=["summary"],
-    type_="answer",
+    type_=PromptTypes.ANSWER,
 )
 default_reasoning_question_qa_prompt: QaPromptTemplate = QaPromptTemplate(
     template=DEFAULT_REASONING_QUESTION_PROMPT,
     keys=["context_str"],
     labels=["reasoning"],
-    type_="question",
+    type_=PromptTypes.QUESTION,
 )
 default_reasoning_answer_qa_prompt: QaPromptTemplate = QaPromptTemplate(
     template=DEFAULT_REASONING_ANSWER_PROMPT,
     keys=["context_str", "question_str"],
     labels=["reasoning"],
-    type_="answer",
+    type_=PromptTypes.ANSWER,
 )
 
 default_prompt_templates: list[QaPromptTemplate] = [
@@ -211,6 +212,132 @@ default_prompt_templates: list[QaPromptTemplate] = [
     default_reasoning_answer_qa_prompt,
 ]
 
+
+# Prompts for Conceptual Generation
+class MetaPromptFormatter(dict[str, str]):
+    def __missing__(self, key: str) -> str:
+        return f"{{{key}}}"
+
+
+DEFAULT_META_CONCEPTUAL_QUESTION_PROMPT = (
+    'A "{type_str}" question is a question with the following properties:\n'
+    "{type_def_str}\n"
+    "I will provide you with an abstract description of some content and a "
+    "topic and a user profile and a list of existing questions.  "
+    'Think of a "{type_str}" question that a user with the specified profile '
+    "might ask that could plausibly be answered using only information "
+    "contained in the content and that is distinct from the existing questions.  "
+    "{additional_instructions_str}\n\n"
+    "## Abstract Description of Content\n\n{content_description_str}\n\n"
+    "## Topic\n\n{topic_str}\n\n"
+    "## Existing Questions\n\n{existing_questions_str}\n\n"
+    "## User Profile\n\n{user_profile_str}\n\n"
+    "\n"
+    "What question did you think about? Do not say anything other than the "
+    "question."
+)
+
+DEFAULT_CONCEPTUAL_FACT_SINGLE_QUESTION_PROMPT = (
+    DEFAULT_META_CONCEPTUAL_QUESTION_PROMPT.format_map(
+        MetaPromptFormatter(
+            type_str="single-fact",
+            type_def_str=(
+                "- It is a natural language question.\n"
+                "- It is answered with a single piece of factual information.\n"
+            ),
+        )
+    )
+)
+
+DEFAULT_CONCEPTUAL_SUMMARY_QUESTION_PROMPT = (
+    DEFAULT_META_CONCEPTUAL_QUESTION_PROMPT.format_map(
+        MetaPromptFormatter(
+            type_str="summary",
+            type_def_str=(
+                "- It is a natural language question.\n"
+                "- It is answered with a summary of multiple pieces of "
+                "information.\n"
+                "- It cannot be answered with a single piece of factual "
+                "information.\n"
+            ),
+        )
+    )
+)
+
+
+DEFAULT_CONCEPTUAL_REASONING_QUESTION_PROMPT = (
+    DEFAULT_META_CONCEPTUAL_QUESTION_PROMPT.format_map(
+        MetaPromptFormatter(
+            type_str="reasoning",
+            type_def_str=(
+                "- It is a natural language question.\n"
+                "- It requires the reader to think critically and make an "
+                "inference or draw a conclusion based on the information "
+                "provided.\n"
+            ),
+        )
+    )
+)
+
+DEFAULT_CONCEPTUAL_TOPIC_GENERATION_PROMPT = (
+    "I will provide you with an abstract description of a document and a user "
+    "profile and ask you to generate a list of topics that might covered in "
+    "that document and that a user with that profile might be interested in.\n\n"
+    "## Abstract Description of Document\n\n{content_description_str}\n\n"
+    "## User Profile\n\n{user_profile_str}\n\n"
+    "Please generate a list of {num_topics} topics.  Generate one topic per "
+    'line. For each line, put a number and then a "." and then a short '
+    "description of the topic.  Do not say anything other than the topics."
+)
+
+default_conceptual_fact_single_question_prompt: QaPromptTemplate = QaPromptTemplate(
+    template=DEFAULT_CONCEPTUAL_FACT_SINGLE_QUESTION_PROMPT,
+    keys=[
+        "additional_instructions_str",
+        "content_description_str",
+        "topic_str",
+        "existing_questions_str",
+        "user_profile_str",
+    ],
+    labels=["fact_single"],
+    type_=PromptTypes.QUESTION,
+)
+
+default_conceptual_summary_question_prompt: QaPromptTemplate = QaPromptTemplate(
+    template=DEFAULT_CONCEPTUAL_SUMMARY_QUESTION_PROMPT,
+    keys=[
+        "additional_instructions_str",
+        "content_description_str",
+        "topic_str",
+        "existing_questions_str",
+        "user_profile_str",
+    ],
+    labels=["summary"],
+    type_=PromptTypes.QUESTION,
+)
+
+default_conceptual_reasoning_question_prompt: QaPromptTemplate = QaPromptTemplate(
+    template=DEFAULT_CONCEPTUAL_REASONING_QUESTION_PROMPT,
+    keys=[
+        "additional_instructions_str",
+        "content_description_str",
+        "topic_str",
+        "existing_questions_str",
+        "user_profile_str",
+    ],
+    labels=["reasoning"],
+    type_=PromptTypes.QUESTION,
+)
+
+default_conceptual_question_generation_prompt_templates: list[QaPromptTemplate] = [
+    default_conceptual_fact_single_question_prompt,
+    default_conceptual_summary_question_prompt,
+    default_conceptual_reasoning_question_prompt,
+]
+
+default_conceptual_topic_prompts: list[str] = [
+    DEFAULT_CONCEPTUAL_TOPIC_GENERATION_PROMPT,
+]
 
 # Specifying Context Prompts
 

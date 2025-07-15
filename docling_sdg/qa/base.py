@@ -2,7 +2,7 @@
 
 from enum import Enum
 from pathlib import Path
-from typing import Annotated, Any, Optional
+from typing import Annotated, Any, NamedTuple, Optional
 
 from llama_index.llms.ibm.base import GenTextParamsMetaNames
 from pydantic import (
@@ -24,6 +24,8 @@ from docling_sdg.qa.prompts.critique_prompts import (
 from docling_sdg.qa.prompts.generation_prompts import (
     QaPromptTemplate,
     default_combined_question_qa_prompt,
+    default_conceptual_question_generation_prompt_templates,
+    default_conceptual_topic_prompts,
 )
 
 
@@ -118,6 +120,12 @@ class LlmOptions(BaseModel):
     )
 
 
+class UserProfile(NamedTuple):
+    description: str
+    number_of_topics: int
+    number_of_iterations_per_topic: int
+
+
 class GenerateOptions(LlmOptions):
     generated_file: Path = Field(
         default=Path("docling_sdg_generated_qac.jsonl"),
@@ -129,6 +137,32 @@ class GenerateOptions(LlmOptions):
     prompts: list[QaPromptTemplate] = Field(
         default=[default_combined_question_qa_prompt],
         description="List of Q&A prompt templates.",
+    )
+
+
+class ConceptualGenerateOptions(LlmOptions):
+    generated_question_file: Path = Field(
+        default=Path("docling_sdg_generated_questions.jsonl"),
+        description="Path to the target file to store the generated questions.",
+    )
+    generated_qac_file: Path = Field(
+        default=Path("docling_sdg_generated_qac.jsonl"),
+        description=(
+            "Path to the target file to store the generated questions AND answers."
+        ),
+    )
+    user_profiles: list[UserProfile]
+    additional_instructions: list[str] = Field(
+        default=[""],
+        description="List of additional instructions to be used for the generation.",
+    )
+    topic_prompts: list[str] = Field(
+        default=default_conceptual_topic_prompts,
+        description="List of conceptual topic prompt templates.",
+    )
+    question_prompts: list[QaPromptTemplate] = Field(
+        default=default_conceptual_question_generation_prompt_templates,
+        description="List of conceptual Q&A prompt templates.",
     )
 
 
@@ -238,4 +272,8 @@ class GenQAC(QAPair[BaseModel]):
     ]
     critiques: dict[str, Critique] = Field(
         default={}, description="A set of critiques for each supported dimension."
+    )
+    metadata: dict[str, str | bool] = Field(
+        default={},
+        description="Additional metadata for the question-answer-context item.",
     )
