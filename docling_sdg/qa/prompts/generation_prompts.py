@@ -233,8 +233,7 @@ DEFAULT_META_CONCEPTUAL_QUESTION_PROMPT = (
     "## Existing Questions\n\n{existing_questions_str}\n\n"
     "## User Profile\n\n{user_profile_str}\n\n"
     "\n"
-    "What question did you think about? Do not say anything other than the "
-    "question."
+    "State the generated question. Do not say anything other than the question."
 )
 
 DEFAULT_CONCEPTUAL_FACT_SINGLE_QUESTION_PROMPT = (
