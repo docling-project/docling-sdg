@@ -1,8 +1,11 @@
 """Define the models for question-answering (Q&A)."""
 
+# This file has been modified with the assistance of AI Tool:
+#  Cursor using claude-4-sonnet
+
 from enum import Enum
 from pathlib import Path
-from typing import Annotated, Any, NamedTuple, Optional
+from typing import Annotated, Any, Optional
 
 from llama_index.llms.ibm.base import GenTextParamsMetaNames
 from pydantic import (
@@ -120,10 +123,29 @@ class LlmOptions(BaseModel):
     )
 
 
-class UserProfile(NamedTuple):
-    description: str
-    number_of_topics: int
-    number_of_iterations_per_topic: int
+class UserProfile(BaseModel):
+    """Profile of a user who might ask a question of the intended AI application.
+
+    This is used to encourage the LLM to generate questions that a user of this
+    profile might ask.
+    """
+
+    description: str = Field(
+        description=(
+            "Description of the user profile, defining the persona and/or user "
+            "objectives and/or expertise level."
+        )
+    )
+    number_of_topics: int = Field(
+        gt=0, description="Number of topics to generate for this user profile."
+    )
+    number_of_iterations_per_topic: int = Field(
+        gt=0,
+        description=(
+            "Number of question generation iterations to perform per topic for "
+            "this user profile."
+        ),
+    )
 
 
 class GenerateOptions(LlmOptions):
@@ -140,6 +162,15 @@ class GenerateOptions(LlmOptions):
     )
 
 
+DEFAULT_USER_PROFILES = [
+    UserProfile(
+        description="A typical user of an AI application",
+        number_of_topics=10,
+        number_of_iterations_per_topic=5,
+    )
+]
+
+
 class ConceptualGenerateOptions(LlmOptions):
     generated_question_file: Path = Field(
         default=Path("docling_sdg_generated_questions.jsonl"),
@@ -151,7 +182,13 @@ class ConceptualGenerateOptions(LlmOptions):
             "Path to the target file to store the generated questions AND answers."
         ),
     )
-    user_profiles: list[UserProfile]
+    user_profiles: list[UserProfile] = Field(
+        default=DEFAULT_USER_PROFILES,
+        description=(
+            "List of user profiles to use for the generation.  The LLM will be "
+            "encouraged to generate questions that a user of these profiles might ask."
+        ),
+    )
     additional_instructions: list[str] = Field(
         default=[""],
         description="List of additional instructions to be used for the generation.",

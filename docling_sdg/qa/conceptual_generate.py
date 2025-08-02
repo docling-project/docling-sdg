@@ -1,3 +1,16 @@
+"""Conceptual question generation.
+
+Conceptual question generation produces questions using an abstract description
+of the content.  The goal is to simulate what an actual user of an AI application
+would know about the content when asking a question in order to optimize how realistic
+the questions are for that application.  Note that this also includes generating some
+questions that can't be answered by the content, which is useful for testing how a
+system responds to such questions.
+"""
+
+# This file has been modified with the assistance of AI Tools:
+#  Cursor using claude-4-sonnet and Google Gemini
+
 import hashlib
 import logging
 import os
@@ -41,15 +54,13 @@ from docling_sdg.qa.utils import (
 
 _log = logging.getLogger(__name__)
 
-# Some code in this file was assisted by Cursor using claude-4-sonnet, mostly for
-# addressing linter errors, adding type hints, and autocompletion.
-
 
 # Configuration for the reference answer generation.
 # These are hard coded for now, but we might make them configurable in the future.
 EMBED_MODEL_ID = "ibm-granite/granite-embedding-125m-english"
 NUMBER_OF_SEARCH_RESULTS_TO_CONSIDER = 25
 NUMBER_OF_SEARCH_RESULTS_TO_SELECT_FOR_ANSWER_GENERATION = 7
+REFERENCE_ANSWER_GENERATION_RERANKER_BATCH_SIZE = 10
 
 
 class ConceptualGenerator:
@@ -286,7 +297,7 @@ class ConceptualGenerator:
             # Process nodes in batches for efficiency.  You don't want to make this the
             # batch size too big because you'll run out of context window size for the
             # model or just confuse the model with more context than it can handle.
-            choice_batch_size=10,
+            choice_batch_size=REFERENCE_ANSWER_GENERATION_RERANKER_BATCH_SIZE,
         )
 
         # Retrieve initial set of nodes
@@ -374,7 +385,6 @@ def _compute_num_questions_expected(
     return n
 
 
-# Assisted by Google Gemini
 def _extract_list_items(text_block: str) -> list[str]:
     """Extracts items from a multi-line string.
 
