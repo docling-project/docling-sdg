@@ -16,8 +16,8 @@ from pydantic import (
     SecretStr,
 )
 
-from docling_core.transforms.chunker import DocChunk, DocMeta
-from docling_core.types.doc import DocItemLabel
+from docling_core.transforms.chunker.hierarchical_chunker import DocChunk, DocMeta
+from docling_core.types.doc.labels import DocItemLabel
 from docling_core.types.nlp.qa import QAPair
 
 from docling_sdg.qa.prompts.critique_prompts import (
@@ -123,6 +123,20 @@ class LlmOptions(BaseModel):
     )
 
 
+class GenerateOptions(LlmOptions):
+    generated_file: Path = Field(
+        default=Path("docling_sdg_generated_qac.jsonl"),
+        description="Path to the target file to store the generated Q&A.",
+    )
+    max_qac: int = Field(
+        default=100, gt=0, description="Maximum number of Q&A items to generate."
+    )
+    prompts: list[QaPromptTemplate] = Field(
+        default=[default_combined_question_qa_prompt],
+        description="List of Q&A prompt templates.",
+    )
+
+
 class UserProfile(BaseModel):
     """Profile of a user who might ask a question of the intended AI application.
 
@@ -147,19 +161,15 @@ class UserProfile(BaseModel):
         ),
     )
 
-
-class GenerateOptions(LlmOptions):
-    generated_file: Path = Field(
-        default=Path("docling_sdg_generated_qac.jsonl"),
-        description="Path to the target file to store the generated Q&A.",
-    )
-    max_qac: int = Field(
-        default=100, gt=0, description="Maximum number of Q&A items to generate."
-    )
-    prompts: list[QaPromptTemplate] = Field(
-        default=[default_combined_question_qa_prompt],
-        description="List of Q&A prompt templates.",
-    )
+    def __hash__(self) -> int:
+        """Make UserProfile hashable so it can be used as dictionary keys."""
+        return hash(
+            (
+                self.description,
+                self.number_of_topics,
+                self.number_of_iterations_per_topic,
+            )
+        )
 
 
 DEFAULT_USER_PROFILES = [
