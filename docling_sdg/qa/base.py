@@ -16,8 +16,8 @@ from pydantic import (
     SecretStr,
 )
 
-from docling_core.transforms.chunker.hierarchical_chunker import DocChunk, DocMeta
-from docling_core.types.doc.labels import DocItemLabel
+from docling_core.transforms.chunker import DocChunk, DocMeta
+from docling_core.types.doc import DocItemLabel
 from docling_core.types.nlp.qa import QAPair
 
 from docling_sdg.qa.prompts.critique_prompts import (
