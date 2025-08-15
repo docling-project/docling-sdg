@@ -1,3 +1,9 @@
+## [v0.4.0](https://github.com/docling-project/docling-sdg/releases/tag/v0.4.0) - 2025-08-15
+
+### Feature
+
+* Conceptual generation ([#38](https://github.com/docling-project/docling-sdg/issues/38)) ([`87acafe`](https://github.com/docling-project/docling-sdg/commit/87acafe1ed4a4141a4cdc7ca6d7797b9983ae72b))
+
 ## [v0.3.0](https://github.com/docling-project/docling-sdg/releases/tag/v0.3.0) - 2025-06-13
 
 ### Feature
