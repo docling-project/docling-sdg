@@ -1,5 +1,8 @@
 """Define the models for question-answering (Q&A)."""
 
+# This file has been modified with the assistance of AI Tool:
+#  Cursor using claude-4-sonnet
+
 from enum import Enum
 from pathlib import Path
 from typing import Annotated, Any, Optional
@@ -24,6 +27,8 @@ from docling_sdg.qa.prompts.critique_prompts import (
 from docling_sdg.qa.prompts.generation_prompts import (
     QaPromptTemplate,
     default_combined_question_qa_prompt,
+    default_conceptual_question_generation_prompt_templates,
+    default_conceptual_topic_prompts,
 )
 
 
@@ -129,6 +134,82 @@ class GenerateOptions(LlmOptions):
     prompts: list[QaPromptTemplate] = Field(
         default=[default_combined_question_qa_prompt],
         description="List of Q&A prompt templates.",
+    )
+
+
+class UserProfile(BaseModel):
+    """Profile of a user who might ask a question of the intended AI application.
+
+    This is used to encourage the LLM to generate questions that a user of this
+    profile might ask.
+    """
+
+    description: str = Field(
+        description=(
+            "Description of the user profile, defining the persona and/or user "
+            "objectives and/or expertise level."
+        )
+    )
+    number_of_topics: int = Field(
+        gt=0, description="Number of topics to generate for this user profile."
+    )
+    number_of_iterations_per_topic: int = Field(
+        gt=0,
+        description=(
+            "Number of question generation iterations to perform per topic for "
+            "this user profile."
+        ),
+    )
+
+    def __hash__(self) -> int:
+        """Make UserProfile hashable so it can be used as dictionary keys."""
+        return hash(
+            (
+                self.description,
+                self.number_of_topics,
+                self.number_of_iterations_per_topic,
+            )
+        )
+
+
+DEFAULT_USER_PROFILES = [
+    UserProfile(
+        description="A typical user of an AI application",
+        number_of_topics=10,
+        number_of_iterations_per_topic=5,
+    )
+]
+
+
+class ConceptualGenerateOptions(LlmOptions):
+    generated_question_file: Path = Field(
+        default=Path("docling_sdg_generated_questions.jsonl"),
+        description="Path to the target file to store the generated questions.",
+    )
+    generated_qac_file: Path = Field(
+        default=Path("docling_sdg_generated_qac.jsonl"),
+        description=(
+            "Path to the target file to store the generated questions AND answers."
+        ),
+    )
+    user_profiles: list[UserProfile] = Field(
+        default=DEFAULT_USER_PROFILES,
+        description=(
+            "List of user profiles to use for the generation.  The LLM will be "
+            "encouraged to generate questions that a user of these profiles might ask."
+        ),
+    )
+    additional_instructions: list[str] = Field(
+        default=[""],
+        description="List of additional instructions to be used for the generation.",
+    )
+    topic_prompts: list[str] = Field(
+        default=default_conceptual_topic_prompts,
+        description="List of conceptual topic prompt templates.",
+    )
+    question_prompts: list[QaPromptTemplate] = Field(
+        default=default_conceptual_question_generation_prompt_templates,
+        description="List of conceptual Q&A prompt templates.",
     )
 
 
@@ -238,4 +319,8 @@ class GenQAC(QAPair[BaseModel]):
     ]
     critiques: dict[str, Critique] = Field(
         default={}, description="A set of critiques for each supported dimension."
+    )
+    metadata: dict[str, str | bool] = Field(
+        default={},
+        description="Additional metadata for the question-answer-context item.",
     )
