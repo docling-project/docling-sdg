@@ -13,8 +13,6 @@ from llama_index.core.base.llms.types import TextBlock
 from llama_index.core.schema import NodeWithScore, TextNode
 from pydantic import SecretStr
 
-from docling_core.types.nlp.qa_labels import QALabelling
-
 from docling_sdg.qa.base import (
     ConceptualGenerateOptions,
     GenQAC,
@@ -30,6 +28,7 @@ from docling_sdg.qa.conceptual_generate import (
     _format_context_node,
 )
 from docling_sdg.qa.prompts.generation_prompts import PromptTypes, QaPromptTemplate
+from docling_sdg.qa.qa_labels import QALabelling
 
 
 @pytest.fixture

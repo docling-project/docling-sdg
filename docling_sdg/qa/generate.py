@@ -12,8 +12,6 @@ from llama_index.core.llms.llm import LLM
 from llama_index.core.prompts.utils import format_string
 from pydantic import ConfigDict, validate_call
 
-from docling_core.types.nlp.qa_labels import QAInformationLabel, QALabelling
-
 from docling_sdg.qa.base import (
     GenerateOptions,
     GenerateResult,
@@ -22,6 +20,7 @@ from docling_sdg.qa.base import (
     Status,
 )
 from docling_sdg.qa.prompts.generation_prompts import PromptTypes
+from docling_sdg.qa.qa_labels import QAInformationLabel, QALabelling
 from docling_sdg.qa.utils import (
     ChatAgent,
     initialize_llm,
