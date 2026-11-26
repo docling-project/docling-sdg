@@ -33,8 +33,6 @@ from llama_index.embeddings.huggingface import HuggingFaceEmbedding
 from pydantic import ConfigDict, validate_call
 from tqdm import tqdm
 
-from docling_core.types.nlp.qa_labels import QALabelling
-
 from docling_sdg.qa.base import (
     ConceptualGenerateOptions,
     GenerateResult,
@@ -45,6 +43,7 @@ from docling_sdg.qa.base import (
 from docling_sdg.qa.prompts.generation_prompts import (
     QaPromptTemplate,
 )
+from docling_sdg.qa.qa_labels import QALabelling
 from docling_sdg.qa.utils import (
     ChatAgent,
     initialize_llm,

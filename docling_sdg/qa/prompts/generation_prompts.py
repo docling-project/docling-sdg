@@ -5,7 +5,7 @@ from enum import Enum
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 from typing_extensions import Self
 
-from docling_core.types.nlp.qa_labels import QAInformationLabel
+from docling_sdg.qa.qa_labels import QAInformationLabel
 
 DEFAULT_COMBINED_QUESTION_PROMPT = (
     "I will provide you a text passage. I need you to generate three questions that "

@@ -18,7 +18,6 @@ from pydantic import (
 
 from docling_core.transforms.chunker import DocChunk, DocMeta
 from docling_core.types.doc import DocItemLabel
-from docling_core.types.nlp.qa import QAPair
 
 from docling_sdg.qa.prompts.critique_prompts import (
     CritiquePromptTemplate,
@@ -30,6 +29,7 @@ from docling_sdg.qa.prompts.generation_prompts import (
     default_conceptual_question_generation_prompt_templates,
     default_conceptual_topic_prompts,
 )
+from docling_sdg.qa.qa import QAPair
 
 
 class Status(str, Enum):

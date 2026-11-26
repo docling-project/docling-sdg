@@ -585,6 +585,7 @@ source = { editable = "." }
 dependencies = [
     { name = "docling" },
     { name = "docling-core", extra = ["chunking"] },
+    { name = "jsonlines" },
     { name = "llama-index-core" },
     { name = "llama-index-embeddings-huggingface" },
     { name = "llama-index-llms-ibm" },
@@ -611,6 +612,7 @@ dev = [
 requires-dist = [
     { name = "docling", specifier = ">=2.26.0" },
     { name = "docling-core", extras = ["chunking"], specifier = ">=2.23.0" },
+    { name = "jsonlines", specifier = ">=3.1.0,<5.0.0" },
     { name = "llama-index-core", specifier = ">=0.12.25" },
     { name = "llama-index-embeddings-huggingface", specifier = ">=0.5.5" },
     { name = "llama-index-llms-ibm", specifier = ">=0.3.3" },
